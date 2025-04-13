@@ -1,12 +1,17 @@
 <?php
 
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
-$factory->define(App\Models\User::class, function () {
-    return [
-        'name' => fake()->name,
-        'email' => fake()->unique()->safeEmail,
-        'password' => bcrypt('password123'),
-        'is_admin' => false,
-    ];
-});
+class UserFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => Hash::make('password'), // 一般ユーザー用の仮パスワード
+            'is_admin' => false,
+        ];
+    }
+}

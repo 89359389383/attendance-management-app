@@ -1,0 +1,230 @@
+/* リセットとベース設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: sans-serif;
+    color: #333;
+    background-color: #fff;
+}
+
+/* ヘッダー */
+.header {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* 相対配置 */
+    justify-content: space-between;
+    background-color: #000;
+    /* 黒背景 */
+}
+
+/* ロゴ全体 */
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 40px;
+}
+
+/* ロゴの画像 */
+.logo-image {
+    margin-left: 30px;
+    display: flex;
+    /* 追加: ロゴ画像をフレックスで縦横中央に配置 */
+    align-items: center;
+    /* 縦方向の中央 */
+    justify-content: center;
+    /* 横方向の中央 */
+}
+
+/* 中央検索バー */
+.header-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+}
+
+.search-input {
+    min-width: 430px;
+    min-height: 40px;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* プレースホルダーテキストのスタイル */
+.search-input::placeholder {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+    vertical-align: middle;
+    /* 縦方向に中央寄せ */
+    padding-left: 30px;
+}
+
+.search-button {
+    min-width: 60px;
+    min-height: 40px;
+    font-size: 18px;
+}
+
+/* 右側リンク・ボタン */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-link {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 1rem;
+    font-size: 20px;
+    background-color: #000;
+    border: none;
+}
+
+.header-link:hover {
+    text-decoration: underline;
+}
+
+.header-button {
+    margin-left: 30px;
+    margin-right: 40px;
+    color: #000;
+    padding: 0.4rem 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* 768px 以上 1300px 以下のレスポンシブ対応 */
+@media (max-width: 1300px) and (min-width: 768px) {
+    .header {
+        height: auto;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .header-left {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .logo-image {
+        margin-left: 0;
+    }
+
+    .header-center {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .search-input {
+        min-width: auto;
+        width: 60%;
+        margin-left: 50px;
+    }
+
+    .search-input::placeholder {
+        font-size: 14px;
+        padding-left: 5px;
+    }
+
+    .search-button {
+        min-width: 45px;
+        font-size: 14px;
+    }
+
+    header-right {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .header-link {
+        font-size: 20px;
+        margin-left: 22px;
+    }
+
+    .header-button {
+        margin-right: 60px;
+        padding: 0.3rem 10px;
+        font-size: 20px;
+    }
+}
+
+/* スマートフォン対応 (767px以下) */
+@media screen and (max-width: 767px) {
+    .header {
+        height: auto;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .header-left {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .logo-image {
+        margin-left: 0;
+    }
+
+    .header-center {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 10px 0;
+    }
+
+    .search-input {
+        min-width: auto;
+        width: 60%;
+        margin-left: 50px;
+    }
+
+    .search-input::placeholder {
+        font-size: 14px;
+        padding-left: 5px;
+    }
+
+    .search-button {
+        min-width: 45px;
+        font-size: 14px;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-link {
+        font-size: 20px;
+        margin-left: 22px;
+    }
+
+    .header-button {
+        margin-right: 60px;
+        padding: 0.3rem 10px;
+        font-size: 20px;
+    }
+}

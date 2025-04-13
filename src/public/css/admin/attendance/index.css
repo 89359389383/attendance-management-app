@@ -1,0 +1,166 @@
+/* リセットCSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* ヘッダー */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    padding: 15px 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo-icon {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* メインコンテンツ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    padding-left: 10px;
+    border-left: 5px solid #000;
+}
+
+/* 日付ナビゲーション */
+.date-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.date-nav-btn {
+    display: flex;
+    align-items: center;
+    color: #666;
+    text-decoration: none;
+}
+
+.date-nav-btn.prev::before {
+    content: "←";
+    margin-right: 5px;
+}
+
+.date-nav-btn.next::after {
+    content: "→";
+    margin-left: 5px;
+}
+
+.current-date {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.current-date::before {
+    content: "📅";
+    margin-right: 10px;
+}
+
+/* 勤怠テーブル */
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.attendance-table th {
+    background-color: #f9f9f9;
+    padding: 15px;
+    text-align: center;
+    font-weight: normal;
+    border-bottom: 1px solid #eee;
+}
+
+.attendance-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.attendance-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.detail-btn {
+    color: #666;
+    text-decoration: none;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    nav ul {
+        margin-top: 10px;
+    }
+
+    nav ul li {
+        margin-left: 10px;
+    }
+
+    .date-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .attendance-table {
+        font-size: 14px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        padding: 10px 5px;
+    }
+}

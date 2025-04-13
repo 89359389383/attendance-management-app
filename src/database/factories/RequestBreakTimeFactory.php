@@ -1,10 +1,8 @@
 <?php
 
-namespace Database\Factories;
-
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BreakTimeFactory extends Factory
+class RequestBreakTimeFactory extends Factory
 {
     public function definition(): array
     {
