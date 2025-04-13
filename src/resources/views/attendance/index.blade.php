@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="ja">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COACHTECH 勤怠管理システム</title>
-    <link rel="stylesheet" href="styles.css"> <!-- 外部CSSファイルをリンク -->
-</head>
+@section('title', 'COACHTECH - 勤怠管理システム')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}"> <!-- 外部CSSファイルをリンク -->
+@endsection
+
+@section('content')
 <body>
     <header>
         <div class="logo">
@@ -133,5 +132,4 @@
         </table>
     </div>
 </body>
-
-</html>
+@endsection

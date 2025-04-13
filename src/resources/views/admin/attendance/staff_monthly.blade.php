@@ -1,3 +1,12 @@
+@extends('layouts.app')
+
+@section('title', 'COACHTECH - 勤怠一覧')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+@endsection
+
+@section('content')
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -135,3 +144,4 @@
 </body>
 
 </html>
+@endsection

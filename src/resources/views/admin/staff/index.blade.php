@@ -1,73 +1,60 @@
-<!DOCTYPE html>
-<html lang="ja">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COACHTECH - スタッフ一覧</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
+@section('title', 'COACHTECH 勤怠管理システム')
 
-<body>
-    <!-- ヘッダー -->
-    <header>
-        <div class="logo">
-            <span class="logo-icon">CT</span>COACHTECH
-        </div>
-        <ul class="nav-menu">
-            <li><a href="#">勤怠一覧</a></li>
-            <li><a href="#">スタッフ一覧</a></li>
-            <li><a href="#">申請一覧</a></li>
-            <li><a href="#">ログアウト</a></li>
-        </ul>
-    </header>
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+@endsection
 
-    <!-- メインコンテンツ -->
-    <div class="container">
-        <h1 class="page-title">スタッフ一覧</h1>
-
-        <table class="staff-table">
-            <thead>
-                <tr>
-                    <th>名前</th>
-                    <th>メールアドレス</th>
-                    <th>月次勤怠</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>西 怜奈</td>
-                    <td>reina.n@coachtech.com</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>山田 太郎</td>
-                    <td>taro.y@coachtech.com</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>増田 一世</td>
-                    <td>issei.m@coachtech.com</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>山本 敬吉</td>
-                    <td>keikichi.y@coachtech.com</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>秋田 朋美</td>
-                    <td>tomomi.a@coachtech.com</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>中西 敬夫</td>
-                    <td>norio.n@coachtech.com</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-            </tbody>
-        </table>
+@section('content')
+<header>
+    <div class="logo">
+        <span class="logo-ct">CT</span>&nbsp;COACHTECH
     </div>
-</body>
+    <div class="nav-links">
+        <a href="#">勤怠</a>
+        <a href="#">勤怠一覧</a>
+        <a href="#">申請</a>
+        <a href="#">ログアウト</a>
+    </div>
+</header>
 
-</html>
+<div class="container">
+    <h1 class="title">勤怠一覧</h1>
+    <div class="month-selector">
+        <div class="month-nav">
+            <span>← 前月</span>
+        </div>
+        <div class="month-display">
+            <span class="calendar-icon">📅</span>
+            <span>2023/06</span>
+        </div>
+        <div class="month-nav">
+            <span>翌月 →</span>
+        </div>
+    </div>
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>出勤</th>
+                <th>退勤</th>
+                <th>休憩</th>
+                <th>合計</th>
+                <th>詳細</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>06/01(木)</td>
+                <td>09:00</td>
+                <td>18:00</td>
+                <td>1:00</td>
+                <td>8:00</td>
+                <td><a href="#" class="detail-link">詳細</a></td>
+            </tr>
+            <!-- 省略 -->
+        </tbody>
+    </table>
+</div>
+@endsection

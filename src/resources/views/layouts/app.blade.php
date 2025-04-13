@@ -19,21 +19,36 @@
         </div>
 
         <!-- ログイン・会員登録ページ、メール認証ページでは非表示 -->
-        @if (!Request::is('login') && !Request::is('register') && !Request::is('email/verify'))
-        <div class="header-center">
-            <!-- 現在のタブに応じて検索フォームの遷移先を変更 -->
-            <form method="GET" action="{{ ($tab ?? '') == 'mylist' ? route('items.index') : route('items.search') }}">
-                <input type="text" name="name" value="{{ request('name') }}" placeholder="なにをお探しですか？" class="search-input">
-                <button type="submit" class="search-button">検索</button>
-            </form>
-        </div>
+        @if (
+        !Request::is('login') &&
+        !Request::is('register') &&
+        !Request::is('email/verify') &&
+        !Request::is('admin/auth/login') &&
+        !Request::is('admin/auth/register')
+        )
+
+        @if (Request::is('attendance*') || Request::is('attendance_request*'))
+        <!-- 一般ユーザー向けメニュー -->
         <div class="header-right">
+            <a href="{{ route('user.show') }}" class="header-link">勤怠</a>
+            <a href="{{ route('user.show') }}" class="header-link">勤怠一覧</a>
+            <a href="{{ route('items.create') }}" class="header-button">申請</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="header-link">ログアウト</button>
             </form>
-            <a href="{{ route('user.show') }}" class="header-link">マイページ</a>
-            <a href="{{ route('items.create') }}" class="header-button">出品</a>
+        </div>
+
+        @elseif (Request::is('admin/attendance*') || Request::is('admin/attendance_request*') || Request::is('admin/staff*'))
+        <!-- 管理者向けメニュー -->
+        <div class="header-right">
+            <a href="{{ route('user.show') }}" class="header-link">勤怠一覧</a>
+            <a href="{{ route('user.show') }}" class="header-link">スタッフ一覧</a>
+            <a href="{{ route('items.create') }}" class="header-button">申請一覧</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="header-link">ログアウト</button>
+            </form>
         </div>
         @endif
     </header>
