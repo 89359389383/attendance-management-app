@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'COACHTECHフリマ - 会員登録')
+@section('title', 'COACHTECH勤怠管理 - 会員登録')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/auth/register.css') }}" />
@@ -13,7 +13,7 @@
         @csrf
 
         <div class="form-group">
-            <label for="name">ユーザー名</label>
+            <label for="name">名前</label>
             <input type="text" id="name" name="name" value="{{ old('name') }}">
             @error('name')
             <p class="error-message" style="color: red;">
@@ -43,7 +43,7 @@
         </div>
 
         <div class="form-group">
-            <label for="password_confirmation">確認用パスワード</label>
+            <label for="password_confirmation">パスワード確認</label>
             <input type="password" id="password_confirmation" name="password_confirmation">
             @error('password_confirmation')
             <p class="error-message" style="color: red;">
@@ -54,7 +54,7 @@
 
         <button type="submit" class="submit-button">登録する</button>
 
-        <a href="{{ route('login') }}" class="login-link">ログインはこちら</a>
+        <a href="{{ route('login.show') }}" class="login-link">ログインはこちら</a>
     </form>
 </div>
 @endsection

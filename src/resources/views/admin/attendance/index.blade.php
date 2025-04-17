@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'COACHTECH - 勤怠一覧')
+@section('title', 'COACHTECH勤怠管理 - 勤怠一覧')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/attendance/index.css') }}">
 @endsection
 
 @section('content')
@@ -18,20 +18,6 @@
 </head>
 
 <body>
-    <header>
-        <div class="logo">
-            <span class="logo-icon">CT</span>COACHTECH
-        </div>
-        <nav>
-            <ul>
-                <li><a href="#">勤怠一覧</a></li>
-                <li><a href="#">スタッフ一覧</a></li>
-                <li><a href="#">申請一覧</a></li>
-                <li><a href="#">ログアウト</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <div class="container">
         <h1 class="title">2023年6月1日の勤怠</h1>
 

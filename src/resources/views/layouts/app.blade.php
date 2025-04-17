@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@yield('title', 'COACHTECHフリマ')</title>
+    <title>@yield('title', 'COACHTECH勤怠管理')</title>
     <link rel="stylesheet" href="{{ asset('css/common.css') }}" />
     @yield('css')
 </head>
@@ -23,33 +23,36 @@
         !Request::is('login') &&
         !Request::is('register') &&
         !Request::is('email/verify') &&
-        !Request::is('admin/auth/login') &&
-        !Request::is('admin/auth/register')
+        !Request::is('admin/login')
         )
 
-        @if (Request::is('attendance*') || Request::is('attendance_request*'))
+        @if (Request::is('attendance') || Request::is('attendance/*') || Request::is('stamp_correction_request*'))
         <!-- 一般ユーザー向けメニュー -->
         <div class="header-right">
-            <a href="{{ route('user.show') }}" class="header-link">勤怠</a>
-            <a href="{{ route('user.show') }}" class="header-link">勤怠一覧</a>
-            <a href="{{ route('items.create') }}" class="header-button">申請</a>
+            <a href="{{ route('attendance.show') }}" class="header-link">勤怠</a>
+            <a href="{{ route('attendance.list') }}" class="header-link">勤怠一覧</a>
+            @if (Route::has('request.list'))
+            <a href="{{ route('request.list') }}" class="header-link">申請</a>
+            @endif
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="header-link">ログアウト</button>
             </form>
         </div>
 
-        @elseif (Request::is('admin/attendance*') || Request::is('admin/attendance_request*') || Request::is('admin/staff*'))
+        @elseif (Request::is('admin/attendance*') || Request::is('admin/staff*') || Request::is('stamp_correction_request*'))
         <!-- 管理者向けメニュー -->
         <div class="header-right">
-            <a href="{{ route('user.show') }}" class="header-link">勤怠一覧</a>
-            <a href="{{ route('user.show') }}" class="header-link">スタッフ一覧</a>
-            <a href="{{ route('items.create') }}" class="header-button">申請一覧</a>
+            <a href="{{ route('admin.attendance.list') }}" class="header-link">勤怠一覧</a>
+            <a href="{{ route('admin.staff.list') }}" class="header-link">スタッフ一覧</a>
+            <a href="{{ route('admin.request.list') }}" class="header-link">申請一覧</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="header-link">ログアウト</button>
             </form>
         </div>
+        @endif
+
         @endif
     </header>
 

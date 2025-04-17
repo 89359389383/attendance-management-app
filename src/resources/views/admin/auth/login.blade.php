@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'COACHTECHフリマ - ログイン')
+@section('title', 'COACHTECH勤怠管理 - ログイン')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}" />
@@ -9,7 +9,7 @@
 @section('content')
 <div class="container">
     <h1>ログイン</h1>
-    <form action="{{ route('login.store') }}" method="POST">
+    <form action="{{ route('admin.login') }}" method="POST">
         @csrf
 
         {{-- ▼ここに認証エラー用のメッセージを表示 --}}

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -27,21 +28,51 @@ class AuthController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-        // 入力されたデータを元にユーザーを作成
-        $user = User::create([
-            'name' => $request->name, // ユーザー名を保存
-            'email' => $request->email, // メールアドレスを保存
-            'password' => bcrypt($request->password), // パスワードをハッシュ化して保存
-        ]);
+        try {
+            // 入力されたデータを元にユーザーを作成
+            Log::info('ユーザー登録処理開始', [
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
 
-        // 作成したユーザーをログイン状態にする
-        Auth::login($user);
+            $user = User::create([
+                'name' => $request->name, // ユーザー名を保存
+                'email' => $request->email, // メールアドレスを保存
+                'password' => bcrypt($request->password), // パスワードをハッシュ化して保存
+            ]);
 
-        // メール認証用の通知を送信
-        $user->sendEmailVerificationNotification();
+            // ユーザー作成後のログ
+            Log::info('ユーザー登録完了', [
+                'user_id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
 
-        // 認証案内ページにリダイレクト
-        return redirect()->route('verification.notice');
+            // 作成したユーザーをログイン状態にする
+            Auth::login($user);
+
+            // ログイン成功後のログ
+            Log::info('ユーザーログイン成功', [
+                'user_id' => $user->id,
+                'name' => $user->name,
+            ]);
+
+            // 勤怠登録ページにリダイレクト
+            Log::info('ユーザー登録後、勤怠登録ページにリダイレクト', [
+                'route' => route('attendance.show')
+            ]);
+
+            return redirect()->route('attendance.show');
+        } catch (\Exception $e) {
+            // エラーログを記録
+            Log::error('ユーザー登録中にエラーが発生', [
+                'error_message' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+
+            // エラーページにリダイレクトまたは適切な処理
+            return back()->withErrors(['error' => 'ユーザー登録に失敗しました。']);
+        }
     }
 
     /**

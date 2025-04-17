@@ -43,7 +43,6 @@ Route::middleware(['auth'])->group(function () {
 
     // 自分の修正申請一覧（GET）
     Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'index'])->name('request.list'); // 修正申請一覧
-
 });
 
 
@@ -58,7 +57,7 @@ Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.
 // =====================
 // 認証が必要な管理者機能
 // =====================
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // 管理者による勤怠一覧（全ユーザー）
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list'); // 管理者の勤怠一覧表示

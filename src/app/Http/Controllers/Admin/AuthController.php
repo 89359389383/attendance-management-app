@@ -27,9 +27,6 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        // 「is_admin」が true（管理者）であることも確認
-        $credentials['is_admin'] = true;
-
         if (Auth::attempt($credentials)) {
             return redirect()->intended('/admin/attendance/list');
         }
