@@ -3,39 +3,33 @@
 @section('title', 'COACHTECH - 勤怠管理システム')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}"> <!-- 外部CSSファイルをリンク -->
+<link rel="stylesheet" href="{{ asset('css/attendance/index.css') }}">
 @endsection
 
 @section('content')
-<body>
-    <header>
-        <div class="logo">
-            <span class="logo-ct">CT</span>&nbsp;COACHTECH
-        </div>
-        <div class="nav-links">
-            <a href="#">勤怠</a>
-            <a href="#">勤怠一覧</a>
-            <a href="#">申請</a>
-            <a href="#">ログアウト</a>
-        </div>
-    </header>
 
+<body>
     <div class="container">
         <h1 class="title">勤怠一覧</h1>
 
+        <!-- 月切り替えナビゲーション -->
         <div class="month-selector">
             <div class="month-nav">
-                <span>← 前月</span>
+                <!-- 前月に遷移 -->
+                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">← 前月</a>
             </div>
             <div class="month-display">
                 <span class="calendar-icon">📅</span>
-                <span>2023/06</span>
+                <!-- 現在の月 -->
+                <span>{{ $currentMonth->format('Y年m月') }}</span>
             </div>
             <div class="month-nav">
-                <span>翌月 →</span>
+                <!-- 翌月に遷移 -->
+                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">翌月 →</a>
             </div>
         </div>
 
+        <!-- 勤怠情報テーブル -->
         <table class="attendance-table">
             <thead>
                 <tr>
@@ -48,86 +42,56 @@
                 </tr>
             </thead>
             <tbody>
+                @forelse ($attendances as $attendance)
                 <tr>
-                    <td>06/01(木)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
+                    <td>{{ \Carbon\Carbon::parse($attendance->work_date)->format('m/d(D)') }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}</td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</td>
+                    <td>
+                        {{-- 合計休憩時間を算出 --}}
+                        @php
+                        $totalBreak = $attendance->breakTimes->sum(function ($break) {
+                        if ($break->break_start && $break->break_end) {
+                        $start = \Carbon\Carbon::parse($break->break_start);
+                        $end = \Carbon\Carbon::parse($break->break_end);
+                        return $end->diffInMinutes($start); // 1分でも差があれば正しくカウントされる
+                        }
+                        return 0;
+                        });
+
+                        echo sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
+                        @endphp
+                    </td>
+
+                    <td>
+                        {{-- 勤務時間合計 --}}
+                        @php
+                        $workTime = ''; // 初期値は空文字（表示なし）
+
+                        // 出勤時刻と退勤時刻が両方とも存在する場合にのみ計算を行う
+                        if ($attendance->clock_in && $attendance->clock_out) {
+                        // 出勤と退勤の差分（分単位）から、合計休憩時間を引いて実働時間を計算する
+                        $total = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes($attendance->clock_in) - $totalBreak;
+
+                        // 実働時間を "時間:分" の形式で表示する（例: 8:15）
+                        $workTime = floor($total / 60) . ':' . str_pad($total % 60, 2, '0', STR_PAD_LEFT);
+                        }
+
+                        // 計算された勤務時間（または空白）を出力する
+                        echo $workTime;
+                        @endphp
+                    </td>
+                    <td>
+                        <a href="{{ url('/attendance/' . $attendance->id) }}" class="detail-link">
+                            詳細
+                        </a>
+                    </td>
                 </tr>
+                @empty
                 <tr>
-                    <td>06/02(金)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
+                    <td colspan="6">該当する勤怠データはありません。</td>
                 </tr>
-                <tr>
-                    <td>06/03(土)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/04(日)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/05(月)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/06(火)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/07(水)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/08(木)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/09(金)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                <tr>
-                    <td>06/10(土)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

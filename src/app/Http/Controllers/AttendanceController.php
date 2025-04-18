@@ -6,6 +6,8 @@ use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\AttendanceRequest;
+use App\Models\BreakTime;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -16,8 +18,20 @@ class AttendanceController extends Controller
      */
     public function show()
     {
-        // 勤怠打刻用のフォームビューを表示
-        return view('attendance.create');
+        // 現在ログインしているユーザーの情報を取得する
+        $user = Auth::user();
+
+        // 今日の日付を「YYYY-MM-DD」形式の文字列で取得する（例：2025-04-18）
+        $today = now()->toDateString();
+
+        // ログイン中のユーザーが今日すでに打刻している勤怠データを取得する
+        // ・user_id がログインユーザーのIDと一致
+        // ・work_date が今日の日付と一致
+        // 条件に一致する最初の1件を取得（存在しない場合は null が返る）
+        $attendance = Attendance::where('user_id', $user->id)
+            ->where('work_date', $today)
+            ->first();
+        return view('attendance.create', compact('attendance'));
     }
 
     /**
@@ -82,7 +96,7 @@ class AttendanceController extends Controller
             $attendance->clock_out = now(); // 退勤時刻を記録
             $attendance->status = '退勤済'; // ステータス更新
             $attendance->save();
-            return redirect()->back()->with('success', 'お疲れ様でした。');
+            return redirect()->back();
         }
 
         // 条件に合致しない場合の処理
@@ -94,13 +108,57 @@ class AttendanceController extends Controller
      * URL: /attendance/list
      * メソッド: GET
      */
-    public function index()
+    public function index(Request $request)
     {
-        // ログイン中のユーザーの勤怠データを取得し、日付の降順で並び替え
-        $attendances = Attendance::where('user_id', Auth::id())->orderBy('work_date', 'asc')->get();
+        // 現在ログインしているユーザーのIDを取得（自分自身の勤怠データだけ表示するため）
+        $userId = Auth::id();
 
-        // 勤怠一覧ビューを表示（データを渡す）
-        return view('attendance.index', compact('attendances'));
+        // URLクエリに「month=YYYY-MM」形式の指定がある場合はその月を、なければ現在の月（今月）を基準にする
+        $currentMonth = $request->input('month')
+            ? \Carbon\Carbon::createFromFormat('Y-m', $request->input('month'))->startOfMonth() // 指定された月の初日をCarbonで作成
+            : now()->startOfMonth(); // 月指定がない場合は今月の初日を取得
+
+        // 当月の開始日を文字列（例："2024-09-01"）で取得（勤怠データ抽出の開始日）
+        $startDate = $currentMonth->copy()->startOfMonth()->toDateString();
+
+        // 当月の終了日を文字列（例："2024-09-30"）で取得（勤怠データ抽出の終了日）
+        $endDate = $currentMonth->copy()->endOfMonth()->toDateString();
+
+        // 勤怠テーブル（attendances）から、ログイン中のユーザーの指定月の勤怠データを取得
+        // 「出勤」「退勤」「休憩」などの情報がある `breakTimes` リレーションも一緒に取得する
+        // さらに、日付順（昇順）に並び替えることで、一覧がカレンダーのように表示されるようにする
+        $attendances = Attendance::with('breakTimes')
+            ->where('user_id', $userId) // 自分の勤怠情報だけに絞る
+            ->whereBetween('work_date', [$startDate, $endDate]) // 指定月の日付範囲に絞る
+            ->orderBy('work_date', 'asc') // 日付の昇順で並べる（01日→31日）
+            ->get(); // 実際にデータベースから取得
+
+        // ログ出力（休憩情報含む） ← この部分を追加
+        foreach ($attendances as $attendance) {
+            Log::info("【勤怠記録】", [
+                '勤務日' => $attendance->work_date,
+                '出勤時刻' => $attendance->clock_in,
+                '退勤時刻' => $attendance->clock_out,
+                'ステータス' => $attendance->status,
+            ]);
+
+            if ($attendance->breakTimes->isEmpty()) {
+                Log::info("　→ 休憩記録なし");
+            } else {
+                foreach ($attendance->breakTimes as $index => $break) {
+                    Log::info("　→ 休憩{$index}：", [
+                        '開始' => $break->break_start,
+                        '終了' => $break->break_end,
+                        '休憩時間（分）' => $break->break_start && $break->break_end
+                            ? \Carbon\Carbon::parse($break->break_end)->diffInMinutes(\Carbon\Carbon::parse($break->break_start))
+                            : '未完了 or 不明',
+                    ]);
+                }
+            }
+        }
+
+        // ビュー（resources/views/attendance/index.blade.php）に、取得した勤怠一覧と現在表示中の月を渡す
+        return view('attendance.index', compact('attendances', 'currentMonth'));
     }
 
     /**
