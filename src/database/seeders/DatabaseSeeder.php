@@ -8,6 +8,8 @@ use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\AttendanceRequest;
 use App\Models\RequestBreakTime;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,43 +36,43 @@ class DatabaseSeeder extends Seeder
         );
 
         // 【3】一般ユーザーをさらに4人作成して、固定ユーザーを先頭に追加（合計5人）
-        $users = User::factory(4)->create(['is_admin' => false]) // ランダムユーザー4名
-            ->prepend($fixedUser); // 先頭にテストユーザーを追加（結果：5名）
+        $users = User::factory(4)->create(['is_admin' => false])
+            ->prepend($fixedUser);
 
-        // 【4】それぞれのユーザーに勤怠データを付与
+        // 【4】それぞれのユーザーに、2025年2月1日〜4月19日の平日のみ勤怠データを作成
         foreach ($users as $user) {
-            // 3ヶ月分（直近3ヶ月）の勤怠データを生成
-            foreach (range(1, 3) as $monthOffset) {
-                // 各月に対して5日分の勤怠データを作成
-                foreach (range(1, 5) as $i) {
-                    // 勤怠日を、各月の1日目から数えて i 日目に設定
-                    $date = now()->subMonths($monthOffset)->startOfMonth()->addDays($i);
+            $period = CarbonPeriod::create('2025-02-01', '2025-04-19');
 
-                    // 勤怠レコードを作成（ユーザーごと・日付ごと）
-                    $attendance = Attendance::factory()->create([
-                        'user_id' => $user->id, // このユーザーに紐付け
-                        'work_date' => $date->format('Y-m-d'), // 勤務日を明示的に指定
+            foreach ($period as $date) {
+                // 土日を除く（0 = 日曜, 6 = 土曜）
+                if (in_array($date->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY])) {
+                    continue;
+                }
+
+                // 勤怠レコード作成
+                $attendance = Attendance::factory()->create([
+                    'user_id' => $user->id,
+                    'work_date' => $date->format('Y-m-d'),
+                ]);
+
+                // 【5】2日ごとに休憩を2件追加（偶数日）
+                if ((int)$date->format('d') % 2 === 0) {
+                    BreakTime::factory(2)->create([
+                        'attendance_id' => $attendance->id,
+                    ]);
+                }
+
+                // 【6】3日ごとに修正申請を作成（3で割り切れる日）
+                if ((int)$date->format('d') % 3 === 0) {
+                    $request = AttendanceRequest::factory()->create([
+                        'user_id' => $user->id,
+                        'attendance_id' => $attendance->id,
                     ]);
 
-                    // 【5】勤怠の中で、2日ごとに休憩を2件追加（複数回休憩のテスト用）
-                    if ($i % 2 === 0) {
-                        BreakTime::factory(2)->create([
-                            'attendance_id' => $attendance->id, // 対象の勤怠IDに紐付け
-                        ]);
-                    }
-
-                    // 【6】3日ごとに修正申請を作成（承認待ちと承認済みを混在）
-                    if ($i % 3 === 0) {
-                        $request = AttendanceRequest::factory()->create([
-                            'user_id' => $user->id, // 修正申請者
-                            'attendance_id' => $attendance->id, // 対象の勤怠
-                        ]);
-
-                        // 【7】対応する修正休憩時間の申請データも作成
-                        RequestBreakTime::factory()->create([
-                            'attendance_id' => $attendance->id, // 同じ勤怠に紐付ける
-                        ]);
-                    }
+                    // 【7】対応する修正休憩時間の申請データも作成
+                    RequestBreakTime::factory()->create([
+                        'attendance_id' => $attendance->id,
+                    ]);
                 }
             }
         }

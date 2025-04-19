@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\AdminAttendanceRequest;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -50,7 +51,7 @@ class AttendanceController extends Controller
      * URL: /attendance/{id}
      * メソッド: PUT
      */
-    public function update(Request $request, $id)
+    public function update(AdminAttendanceRequest $request, $id)
     {
         // バリデーション処理は別ファイルに記載（ここでは省略）
 
@@ -87,9 +88,8 @@ class AttendanceController extends Controller
             }
         }
 
-        // 成功メッセージと共に詳細画面へリダイレクト
-        return redirect()->route('admin.attendance.show', $attendance->id)
-            ->with('success', '勤怠情報を更新しました');
+        //一覧ページへリダイレクト
+        return redirect()->route('admin.attendance.list', $attendance->id);
     }
 
     /**
