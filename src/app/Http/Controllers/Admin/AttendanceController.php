@@ -113,4 +113,65 @@ class AttendanceController extends Controller
         // ビューに渡す
         return view('admin.attendance.staff_monthly', compact('user', 'attendances', 'yearMonth'));
     }
+
+    /**
+     * ✅ 追加：月次勤怠CSV出力（admin.attendance.staff.export）
+     * URL: /admin/attendance/staff/{id}/export
+     * メソッド: GET
+     */
+    public function exportMonthlyCsv($id, Request $request)
+    {
+        $user = User::findOrFail($id);
+        $yearMonth = $request->input('month', Carbon::now()->format('Y-m'));
+
+        $attendances = Attendance::where('user_id', $id)
+            ->where('work_date', 'like', "$yearMonth%")
+            ->with('breakTimes')
+            ->get();
+
+        $csvHeader = ['日付', '出勤', '退勤', '休憩時間', '合計労働時間'];
+        $csvData = [];
+
+        foreach ($attendances as $attendance) {
+            $clockIn = optional($attendance->clock_in)->format('H:i');
+            $clockOut = optional($attendance->clock_out)->format('H:i');
+
+            $totalBreak = $attendance->breakTimes->sum(function ($break) {
+                return $break->break_start && $break->break_end
+                    ? \Carbon\Carbon::parse($break->break_end)->diffInMinutes(\Carbon\Carbon::parse($break->break_start))
+                    : 0;
+            });
+
+            $breakFormatted = sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
+
+            $workTotal = '';
+            if ($attendance->clock_in && $attendance->clock_out) {
+                $diff = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_in)) - $totalBreak;
+                $workTotal = sprintf('%d:%02d', floor($diff / 60), $diff % 60);
+            }
+
+            $csvData[] = [
+                \Carbon\Carbon::parse($attendance->work_date)->format('Y/m/d(D)'),
+                $clockIn,
+                $clockOut,
+                $breakFormatted,
+                $workTotal,
+            ];
+        }
+
+        $fileName = $user->name . '_月次勤怠_' . $yearMonth . '.csv';
+
+        return response()->streamDownload(function () use ($csvHeader, $csvData) {
+            $stream = fopen('php://output', 'w');
+            // Excel対応のBOM付き（文字化け防止）
+            fprintf($stream, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($stream, $csvHeader);
+            foreach ($csvData as $row) {
+                fputcsv($stream, $row);
+            }
+            fclose($stream);
+        }, $fileName, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
 }

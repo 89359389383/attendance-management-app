@@ -73,6 +73,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // スタッフごとの月次勤怠一覧
     Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffMonthlyList'])->name('admin.attendance.staff'); // スタッフ別勤怠月次一覧
 
+
+    // CSV出力
+    Route::get('/admin/attendance/staff/{id}/export', [AdminAttendanceController::class, 'exportMonthlyCsv'])->name('admin.attendance.staff.export');
+
     // 修正申請一覧（全ユーザー）
     Route::get('/admin/stamp_correction_request/list', [AdminAttendanceRequestController::class, 'index'])->name('admin.request.list'); // 修正申請一覧
 
