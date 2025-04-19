@@ -51,4 +51,9 @@ class AttendanceRequest extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+
+    public function requestBreakTimes()
+    {
+        return $this->hasMany(RequestBreakTime::class, 'attendance_id', 'attendance_id');
+    }
 }

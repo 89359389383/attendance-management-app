@@ -74,7 +74,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffMonthlyList'])->name('admin.attendance.staff'); // スタッフ別勤怠月次一覧
 
     // 修正申請一覧（全ユーザー）
-    Route::get('/stamp_correction_request/list', [AdminAttendanceRequestController::class, 'index'])->name('admin.request.list'); // 修正申請一覧
+    Route::get('/admin/stamp_correction_request/list', [AdminAttendanceRequestController::class, 'index'])->name('admin.request.list'); // 修正申請一覧
 
     // 修正申請の承認処理（POST）
     Route::post('/stamp_correction_request/approve/{id}', [AdminAttendanceRequestController::class, 'approve'])->name('admin.request.approve'); // 承認処理

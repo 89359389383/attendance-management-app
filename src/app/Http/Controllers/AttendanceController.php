@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\AttendanceRequest as AttendanceRequestModel;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\BreakTime;
 use Illuminate\Support\Facades\Log;
@@ -170,29 +171,17 @@ class AttendanceController extends Controller
      */
     public function showDetail($id)
     {
-        // ★【修正】リレーション（breakTimes, user）を事前に読み込む
         $attendance = Attendance::with(['breakTimes', 'user'])
             ->where('id', $id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // ★【ログ出力】（変数が null の場合に備えて format() を分ける）
-        Log::info('【勤怠詳細アクセス】ユーザーが勤怠詳細ページにアクセスしました', [
-            'ユーザーID' => Auth::id(),
-            'ユーザー名' => Auth::user()->name,
-            'ユーザーメール' => Auth::user()->email,
-            '勤怠ID' => $attendance->id,
-            '勤務日' => $attendance->work_date,
-            '出勤時刻' => $attendance->clock_in ? $attendance->clock_in->format('Y-m-d H:i:s') : null,
-            '退勤時刻' => $attendance->clock_out ? $attendance->clock_out->format('Y-m-d H:i:s') : null,
-            '備考' => $attendance->note,
-            'ステータス' => $attendance->status,
-            '登録日時' => $attendance->created_at->toDateTimeString(),
-            '更新日時' => $attendance->updated_at->toDateTimeString(),
-        ]);
+        $attendanceRequest = AttendanceRequestModel::where('attendance_id', $attendance->id)
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->first();
 
-        // ビューにデータを渡して表示
-        return view('attendance.show', compact('attendance'));
+        return view('attendance.show', compact('attendance', 'attendanceRequest'));
     }
 
     /**
