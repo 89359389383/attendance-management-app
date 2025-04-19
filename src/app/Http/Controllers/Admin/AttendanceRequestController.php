@@ -19,10 +19,10 @@ class AttendanceRequestController extends Controller
     public function index()
     {
         // 承認待ちの修正申請データを取得（status: 'pending'）
-        $pendingRequests = AttendanceRequest::where('status', 'pending')->get();
+        $pendingRequests = AttendanceRequest::where('status', '承認待ち')->get();
 
         // 承認済みの修正申請データを取得（status: 'approved'）
-        $approvedRequests = AttendanceRequest::where('status', 'approved')->get();
+        $approvedRequests = AttendanceRequest::where('status', '承認済み')->get();
 
         // 修正申請一覧ビューを返す（admin/attendance_request/index.blade.php）
         return view('admin.attendance_request.index', compact('pendingRequests', 'approvedRequests'));

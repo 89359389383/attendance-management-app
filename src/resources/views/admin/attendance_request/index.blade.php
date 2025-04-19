@@ -1,71 +1,101 @@
 @extends('layouts.app')
 
-@section('title', 'COACHTECH - 申請一覧')
+@section('title', 'COACHTECH - 修正申請一覧')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/attendance_request/index.css') }}"> {{-- 外部CSS --}}
 @endsection
 
 @section('content')
-<!DOCTYPE html>
-<html lang="ja">
+<div class="container">
+    <h1>修正申請一覧</h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>申請一覧</title>
-    <link rel="stylesheet" href="styles.css"> <!-- 外部CSSをリンク -->
-</head>
+    {{-- タブ切り替え --}}
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('pending')">承認待ち</button>
+        <button class="tab-button" onclick="showTab('approved')">承認済み</button>
+    </div>
 
-<body>
-    <div class="container">
-        <h1>申請一覧</h1>
-
-        <div class="tabs">
-            <div class="tab active">承認待ち</div>
-            <div class="tab">承認済み</div>
-        </div>
-
+    {{-- 承認待ち一覧 --}}
+    <div id="pending" class="tab-content">
+        <h2>承認待ち</h2>
         <table>
             <thead>
                 <tr>
                     <th>状態</th>
                     <th>名前</th>
-                    <th>対象日時</th>
+                    <th>対象日</th>
                     <th>申請理由</th>
-                    <th>申請日時</th>
+                    <th>申請日</th>
                     <th>詳細</th>
                 </tr>
             </thead>
             <tbody>
+                @forelse ($pendingRequests as $request)
                 <tr>
                     <td>承認待ち</td>
-                    <td>西俗奈</td>
-                    <td>2023/06/01</td>
-                    <td>遅延のため</td>
-                    <td>2023/06/02</td>
-                    <td><button class="details-btn">詳細</button></td>
+                    <td>{{ $request->user->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
+                    <td>{{ $request->note }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
+                    <td>
+                        {{-- 修正申請詳細へ遷移するボタン --}}
+                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="btn btn-sm btn-primary">詳細</a>
+                    </td>
                 </tr>
+                @empty
                 <tr>
-                    <td>承認待ち</td>
-                    <td>山田太郎</td>
-                    <td>2023/06/01</td>
-                    <td>遅延のため</td>
-                    <td>2023/08/02</td>
-                    <td><button class="details-btn">詳細</button></td>
+                    <td colspan="6">承認待ちの申請はありません。</td>
                 </tr>
-                <tr>
-                    <td>承認待ち</td>
-                    <td>山田花子</td>
-                    <td>2023/06/02</td>
-                    <td>遅延のため</td>
-                    <td>2023/07/02</td>
-                    <td><button class="details-btn">詳細</button></td>
-                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
-</body>
 
-</html>
+    {{-- 承認済み一覧 --}}
+    <div id="approved" class="tab-content" style="display: none;">
+        <h2>承認済み</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>状態</th>
+                    <th>名前</th>
+                    <th>対象日</th>
+                    <th>申請理由</th>
+                    <th>申請日</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($approvedRequests as $request)
+                <tr>
+                    <td>承認済み</td>
+                    <td>{{ $request->user->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
+                    <td>{{ $request->note }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
+                    <td>
+                        {{-- 承認済みの詳細表示（承認ボタンは出ない） --}}
+                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="btn btn-sm btn-secondary">詳細</a>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6">承認済みの申請はありません。</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{-- タブ切り替え用スクリプト --}}
+<script>
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabName).style.display = 'block';
+        event.target.classList.add('active');
+    }
+</script>
 @endsection

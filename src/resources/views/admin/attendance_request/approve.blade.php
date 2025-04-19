@@ -3,7 +3,7 @@
 @section('title', 'COACHTECH - 勤怠詳細')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('css/admin/attendance_request/approve.css') }}">
 @endsection
 
 @section('content')
