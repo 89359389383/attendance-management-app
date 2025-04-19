@@ -18,6 +18,13 @@ class Attendance extends Model
         'status',
     ];
 
+    protected $casts = [
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     /**
      * ユーザー（多対1）
      */

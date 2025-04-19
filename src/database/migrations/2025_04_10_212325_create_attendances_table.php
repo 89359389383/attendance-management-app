@@ -20,7 +20,7 @@ class CreateAttendancesTable extends Migration
             $table->dateTime('clock_in')->nullable();   // 出勤時刻
             $table->dateTime('clock_out')->nullable();  // 退勤時刻
             $table->text('note')->nullable();           // 備考
-            $table->enum('status', ['勤務外', '出勤中', '休憩中', '退勤済']);
+            $table->enum('status', ['勤務外', '出勤中', '休憩中', '退勤済', '修正申請中']);
             $table->timestamps();
         });
     }

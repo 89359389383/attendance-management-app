@@ -31,9 +31,7 @@
         <div class="header-right">
             <a href="{{ route('attendance.show') }}" class="header-link">勤怠</a>
             <a href="{{ route('attendance.list') }}" class="header-link">勤怠一覧</a>
-            @if (Route::has('request.list'))
-            <a href="{{ route('request.list') }}" class="header-link">申請</a>
-            @endif
+            <a href="/stamp_correction_request/list" class="header-link">申請</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="header-link">ログアウト</button>

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\BreakTime;
 use Illuminate\Support\Facades\Log;
+use App\Models\RequestBreakTime; // ★【追加】修正申請用の休憩テーブル用モデルを読み込む
+use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
@@ -168,10 +170,28 @@ class AttendanceController extends Controller
      */
     public function showDetail($id)
     {
-        // ログイン中ユーザーの指定勤怠データを取得（存在しない場合は404）
-        $attendance = Attendance::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        // ★【修正】リレーション（breakTimes, user）を事前に読み込む
+        $attendance = Attendance::with(['breakTimes', 'user'])
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
-        // 勤怠詳細ビューにデータを渡して表示
+        // ★【ログ出力】（変数が null の場合に備えて format() を分ける）
+        Log::info('【勤怠詳細アクセス】ユーザーが勤怠詳細ページにアクセスしました', [
+            'ユーザーID' => Auth::id(),
+            'ユーザー名' => Auth::user()->name,
+            'ユーザーメール' => Auth::user()->email,
+            '勤怠ID' => $attendance->id,
+            '勤務日' => $attendance->work_date,
+            '出勤時刻' => $attendance->clock_in ? $attendance->clock_in->format('Y-m-d H:i:s') : null,
+            '退勤時刻' => $attendance->clock_out ? $attendance->clock_out->format('Y-m-d H:i:s') : null,
+            '備考' => $attendance->note,
+            'ステータス' => $attendance->status,
+            '登録日時' => $attendance->created_at->toDateTimeString(),
+            '更新日時' => $attendance->updated_at->toDateTimeString(),
+        ]);
+
+        // ビューにデータを渡して表示
         return view('attendance.show', compact('attendance'));
     }
 
@@ -182,21 +202,58 @@ class AttendanceController extends Controller
      */
     public function update(AttendanceRequest $request, $id)
     {
-        // ログイン中ユーザーが対象の勤怠データを取得
         $attendance = Attendance::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
 
-        // 出勤時刻を更新
-        $attendance->clock_in = $request->clock_in;
-        // 退勤時刻を更新
-        $attendance->clock_out = $request->clock_out;
-        // 備考を更新
-        $attendance->note = $request->note;
-        // 修正申請中のステータスに変更
+        // ステータスを「修正申請中」に更新
         $attendance->status = '修正申請中';
-        // レコードを保存
         $attendance->save();
 
-        // 勤怠一覧ページへリダイレクト
+        // ログ出力：修正申請の開始
+        Log::info('修正申請が開始されました', [
+            'ユーザーID' => Auth::id(),
+            '勤怠ID' => $attendance->id,
+            'リクエストデータ' => $request->all(),
+        ]);
+
+        // 修正申請テーブルにレコード追加
+        \App\Models\AttendanceRequest::create([
+            'user_id' => Auth::id(),
+            'attendance_id' => $attendance->id,
+            'request_date' => now()->toDateString(),
+            'clock_in' => $request->clock_in,
+            'clock_out' => $request->clock_out,
+            'note' => $request->note,
+            'status' => '承認待ち',
+        ]);
+
+        // 休憩申請（request_break_times）も保存
+        RequestBreakTime::where('attendance_id', $attendance->id)->delete();
+
+        $breakStarts = $request->input('break_start', []);
+        $breakEnds = $request->input('break_end', []);
+
+        foreach ($breakStarts as $index => $startTime) {
+            $endTime = $breakEnds[$index] ?? null;
+            if ($startTime || $endTime) {
+                RequestBreakTime::create([
+                    'attendance_id' => $attendance->id,
+                    'break_start' => $startTime,
+                    'break_end' => $endTime,
+                ]);
+                // ログ出力：休憩申請の追加
+                Log::info('休憩申請が追加されました', [
+                    '勤怠ID' => $attendance->id,
+                    '休憩開始' => $startTime,
+                    '休憩終了' => $endTime,
+                ]);
+            }
+        }
+
+        // ログ出力：修正申請の完了
+        Log::info('修正申請が完了しました', [
+            '勤怠ID' => $attendance->id,
+        ]);
+
         return redirect()->route('attendance.list')->with('success', '修正申請が完了しました。');
     }
 }

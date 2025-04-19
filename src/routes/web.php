@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
     // 自分の修正申請一覧（GET）
     Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'index'])->name('request.list'); // 修正申請一覧
+
 });
 
 
@@ -57,14 +58,14 @@ Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.
 // =====================
 // 認証が必要な管理者機能
 // =====================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
 
     // 管理者による勤怠一覧（全ユーザー）
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list'); // 管理者の勤怠一覧表示
 
     // 管理者による勤怠詳細確認・修正（GET/PUT）
-    Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.detail'); // 勤怠詳細確認
-    Route::put('/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update'); // 勤怠修正処理
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.detail'); // 勤怠詳細確認
+    Route::put('/admin/attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin.attendance.update'); // 勤怠修正処理
 
     // スタッフ一覧
     Route::get('/admin/staff/list', [AdminStaffController::class, 'index'])->name('admin.staff.list'); // 全一般ユーザー一覧
