@@ -25,9 +25,8 @@
         !Request::is('email/verify') &&
         !Request::is('admin/login')
         )
-
         @if (Request::is('attendance') || Request::is('attendance/*') || Request::is('stamp_correction_request*'))
-        <!-- 一般ユーザー向けメニュー -->
+        {{-- 一般ユーザー向け --}}
         <div class="header-right">
             <a href="{{ route('attendance.show') }}" class="header-link">勤怠</a>
             <a href="{{ route('attendance.list') }}" class="header-link">勤怠一覧</a>
@@ -37,9 +36,8 @@
                 <button type="submit" class="header-link">ログアウト</button>
             </form>
         </div>
-
-        @elseif (Request::is('admin/attendance*') || Request::is('admin/staff*') || Request::is('stamp_correction_request*'))
-        <!-- 管理者向けメニュー -->
+        @elseif (Request::is('admin/*'))
+        {{-- 管理者向けメニュー --}}
         <div class="header-right">
             <a href="{{ route('admin.attendance.list') }}" class="header-link">勤怠一覧</a>
             <a href="{{ route('admin.staff.list') }}" class="header-link">スタッフ一覧</a>
@@ -50,7 +48,6 @@
             </form>
         </div>
         @endif
-
         @endif
     </header>
 

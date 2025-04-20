@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@example.com'], // 条件：このメールアドレスのユーザーがいるか
             [
                 'name' => 'AdminUser', // 管理者の名前
-                'password' => bcrypt('adminpassword'), // パスワードをハッシュ化して保存
+                'password' => bcrypt('p!N3xZ7$uM2y#Ft9'), // パスワードをハッシュ化して保存
                 'is_admin' => true, // 管理者フラグをON
             ]
         );
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@example.com'], // メールが同じユーザーがいれば更新
             [
                 'name' => 'TestUser', // 表示名
-                'password' => bcrypt('password19980614'), // 固定パスワード
+                'password' => bcrypt('Kz8#rTq91@LmWv4z'), // 固定パスワード
                 'is_admin' => false, // 一般ユーザーとして設定
             ]
         );

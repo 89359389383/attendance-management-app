@@ -71,7 +71,7 @@
                 <tr>
                     <td>承認済み</td>
                     <td>{{ $request->user->name }}</td>
-                    <td>{{ $request->attendance->work_date->format('Y/m/d') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
                     <td>{{ $request->note }}</td>
                     <td>{{ $request->request_date->format('Y/m/d') }}</td>
                     <td>
