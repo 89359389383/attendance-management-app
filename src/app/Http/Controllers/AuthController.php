@@ -28,50 +28,37 @@ class AuthController extends Controller
      */
     public function store(RegisterRequest $request)
     {
+        Log::info('ユーザー登録リクエストを受信', [
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+
         try {
-            // 入力されたデータを元にユーザーを作成
-            Log::info('ユーザー登録処理開始', [
+            // ユーザーを作成
+            $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'password' => bcrypt($request->password),
             ]);
+            Log::info('ユーザー作成成功', ['user_id' => $user->id]);
 
-            $user = User::create([
-                'name' => $request->name, // ユーザー名を保存
-                'email' => $request->email, // メールアドレスを保存
-                'password' => bcrypt($request->password), // パスワードをハッシュ化して保存
-            ]);
-
-            // ユーザー作成後のログ
-            Log::info('ユーザー登録完了', [
-                'user_id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-            ]);
-
-            // 作成したユーザーをログイン状態にする
+            // ユーザーを自動ログイン
             Auth::login($user);
+            Log::info('ユーザー自動ログイン成功', ['user_id' => $user->id]);
 
-            // ログイン成功後のログ
-            Log::info('ユーザーログイン成功', [
-                'user_id' => $user->id,
-                'name' => $user->name,
+            // 認証メールを送信
+            $user->sendEmailVerificationNotification();
+            Log::info('認証メール送信', ['user_email' => $user->email]);
+
+            // メール認証ページにリダイレクト
+            Log::info('メール認証ページにリダイレクト');
+            return redirect()->route('verification.notice');
+        } catch (\Throwable $e) {
+            Log::error('ユーザー登録処理中に例外が発生', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
-
-            // 勤怠登録ページにリダイレクト
-            Log::info('ユーザー登録後、勤怠登録ページにリダイレクト', [
-                'route' => route('attendance.show')
-            ]);
-
-            return redirect()->route('attendance.show');
-        } catch (\Exception $e) {
-            // エラーログを記録
-            Log::error('ユーザー登録中にエラーが発生', [
-                'error_message' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
-            ]);
-
-            // エラーページにリダイレクトまたは適切な処理
-            return back()->withErrors(['error' => 'ユーザー登録に失敗しました。']);
+            return redirect()->back()->withErrors(['register' => '登録処理中にエラーが発生しました']);
         }
     }
 

@@ -1,0 +1,64 @@
+.container {
+    text-align: center;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px;
+    margin-top: 90px;
+}
+
+.message {
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 1.6;
+    margin-bottom: 40px;
+}
+
+.message p {
+    margin: 0;
+}
+
+.btn-primary {
+    display: inline-block;
+    background-color: #e6e6e6;
+    color: #000;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 25px;
+    font-weight: bold;
+    border: 1px solid #000000;
+    margin-bottom: 40px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 16px;
+    color: #0099ff;
+    background-color: white;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 16px;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (max-width: 850px) {
+    .message {
+        font-size: 20px;
+    }
+
+    .btn-primary {
+        font-size: 16px;
+    }
+
+    .btn-secondary {
+        font-size: 16px;
+    }
+}

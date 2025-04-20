@@ -8,6 +8,9 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AttendanceRequestController as AdminAttendanceRequestController;
 use App\Http\Controllers\Admin\StaffController as AdminStaffController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 // =====================
 // 一般ユーザー向けページ
@@ -80,3 +83,25 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // 修正申請の承認処理（POST）
     Route::post('/stamp_correction_request/approve/{id}', [AdminAttendanceRequestController::class, 'approve'])->name('admin.request.approve');
 });
+
+// メール認証関連のルート
+Route::get('/email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+// メール認証を完了したら、自動ログインしプロフィール設定へ
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $user = $request->user();
+    $request->fulfill(); // 認証を完了
+
+    Auth::login($user); // 認証完了したら自動ログイン
+
+    return redirect('/attendance'); // 勤怠登録画面へリダイレクト
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+// メール認証の再送信
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('resent', true);
+})->middleware(['auth'])->name('verification.resend');
