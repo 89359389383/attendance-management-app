@@ -22,7 +22,8 @@ class AttendanceEditAdminTest extends TestCase
         $admin = User::factory()->create(['is_admin' => true])->first();
 
         // 2. 勤怠データと承認待ちの修正申請を作成
-        $attendances = Attendance::factory()->count(3)->create();
+        $user = User::factory()->create();  // ユーザーを作成
+        $attendances = Attendance::factory()->count(3)->create(['user_id' => $user->id]); // 作成したユーザーIDを関連付ける
         foreach ($attendances as $attendance) {
             AttendanceRequest::factory()->create([
                 'attendance_id' => $attendance->id,
@@ -50,7 +51,7 @@ class AttendanceEditAdminTest extends TestCase
         $admin = User::factory()->create(['is_admin' => true])->first();
 
         // 2. 一般ユーザーと勤怠データを作成してから承認済みの修正申請を作成
-        $user = User::factory()->create(['is_admin' => false]);
+        $user = User::factory()->create();
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
         AttendanceRequest::factory()->count(3)->create([
             'user_id' => $user->id,

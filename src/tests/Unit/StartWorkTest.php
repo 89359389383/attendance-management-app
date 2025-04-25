@@ -61,10 +61,11 @@ class StartWorkTest extends TestCase
         // 1. 出勤済（退勤済）のデータを持つユーザーを作成
         $user = User::factory()->create()->first();
         Attendance::factory()->create([
-            'user_id' => $user->id,
+            'user_id' => $user->id, // ✅ ちゃんと存在するuser_idを指定
             'work_date' => Carbon::now()->toDateString(),
             'clock_in' => Carbon::now()->subHours(8),
             'clock_out' => Carbon::now(),
+            'note' => 'テスト出勤',
             'status' => '退勤済',
         ]);
         $this->actingAs($user);
@@ -87,19 +88,29 @@ class StartWorkTest extends TestCase
             'action' => 'clock_in',
         ]);
 
-        // 2. 管理者ユーザーとして再ログイン（adminミドルウェアをスキップする場合は適宜追加）
-        $admin = User::factory()->create(['is_admin' => true])->first();
-        $this->actingAs($admin);
+        // 2. 管理者ユーザーを作成
+        $admin = User::factory()->create([
+            'is_admin' => true,
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password123'),
+        ]);
 
-        // 3. 管理画面の勤怠一覧ページにアクセス
+        // 3. 管理者ログイン（POSTで本物のログインを通す）
+        $response = $this->post(route('admin.login'), [
+            'email' => 'admin@example.com',
+            'password' => 'password123',
+        ]);
+        $response->assertRedirect('/admin/attendance/list');
+
+        // 4. 管理画面の勤怠一覧ページにアクセス
         $response = $this->get(route('admin.attendance.list'));
 
-        // 4. 現在の日付と出勤時刻が含まれているか確認（出勤したばかりなので存在するはず）
-        $today = Carbon::now()->format('Y年m月d日'); // 年月日を「2025年04月24日」の形式に変更
+        // 5. 現在の日付と出勤時刻が含まれているか確認
+        $today = Carbon::now()->format('Y年m月d日');
         $clockInTime = Carbon::now()->format('H:i');
 
         $html = preg_replace('/\s+/', '', $response->getContent());
-        $this->assertStringContainsString($today, $html);  // 変更された日付フォーマットに合わせる
+        $this->assertStringContainsString($today, $html);
         $this->assertStringContainsString($clockInTime, $html);
     }
 }
