@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'COACHTECH勤怠管理 - ログイン')
+@section('title', 'COACHTECH勤怠管理 - 管理者ログイン')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/auth/login.css') }}" />
@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="container">
-    <h1>ログイン</h1>
+    <h1>管理者ログイン</h1>
     <form action="{{ route('admin.login') }}" method="POST">
         @csrf
 
@@ -42,9 +42,7 @@
             @enderror
         </div>
 
-        <button type="submit" class="submit-button">ログインする</button>
-
-        <a href="{{ route('register.show') }}" class="registration-link">会員登録はこちら</a>
+        <button type="submit" class="submit-button">管理者ログインする</button>
     </form>
 </div>
 @endsection
