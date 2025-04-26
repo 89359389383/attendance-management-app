@@ -16,7 +16,9 @@
         <div class="month-selector">
             <div class="month-nav">
                 <!-- 前月に遷移 -->
-                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">← 前月</a>
+                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}" class="month-link">
+                    <span class="arrow">←</span> 前月
+                </a>
             </div>
             <div class="month-display">
                 <span class="calendar-icon">📅</span>
@@ -25,15 +27,17 @@
             </div>
             <div class="month-nav">
                 <!-- 翌月に遷移 -->
-                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">翌月 →</a>
+                <a href="{{ route('attendance.list', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}" class="month-link">
+                    翌月 <span class="arrow">→</span>
+                </a>
             </div>
         </div>
 
         <!-- 勤怠情報テーブル -->
-        <table class="attendance-table">
+        <table class=" attendance-table">
             <thead>
                 <tr>
-                    <th>日付</th>
+                    <th class="date-header">日付</th>
                     <th>出勤</th>
                     <th>退勤</th>
                     <th>休憩</th>
@@ -44,7 +48,7 @@
             <tbody>
                 @forelse ($attendances as $attendance)
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($attendance->work_date)->format('m/d(D)') }}</td>
+                    <td class="date-cell">{{ \Carbon\Carbon::parse($attendance->work_date)->format('m/d(D)') }}</td>
                     <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}</td>
                     <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</td>
                     <td>

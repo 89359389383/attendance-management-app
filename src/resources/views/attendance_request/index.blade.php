@@ -18,7 +18,6 @@
 
     <!-- 承認待ちリスト -->
     <div id="pending" class="tab-content">
-        <h2>承認待ち</h2>
         <table>
             <thead>
                 <tr>
@@ -40,7 +39,7 @@
                     {{-- 変更後：PHP関数で処理（どんな形式でも安全） --}}
                     <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
                     <td>
-                        <a href="{{ route('attendance.detail', ['id' => $request->attendance_id]) }}" class="btn btn-sm btn-primary">詳細</a>
+                        <a href="{{ route('attendance.detail', ['id' => $request->attendance_id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @empty
@@ -54,7 +53,6 @@
 
     <!-- 承認済みリスト -->
     <div id="approved" class="tab-content" style="display: none;">
-        <h2>承認済み</h2>
         <table>
             <thead>
                 <tr>
@@ -75,7 +73,7 @@
                     <td>{{ $request->note }}</td>
                     <td>{{ $request->request_date->format('Y/m/d') }}</td>
                     <td>
-                        <a href="{{ route('attendance.detail', ['id' => $request->attendance_id]) }}" class="btn btn-sm btn-primary">詳細</a>
+                        <a href="{{ route('attendance.detail', ['id' => $request->attendance_id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @empty
