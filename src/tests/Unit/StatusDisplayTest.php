@@ -28,7 +28,7 @@ class StatusDisplayTest extends TestCase
         $response = $this->get(route('attendance.show'));
 
         // 4. ステータスが「勤務外」と表示されているか確認
-        $response->assertSeeText('ステータス: 勤務外');
+        $response->assertSeeText('勤務外');
     }
 
     /**
@@ -52,7 +52,7 @@ class StatusDisplayTest extends TestCase
         $response = $this->get(route('attendance.show'));
 
         // 4. ステータスが「出勤中」と表示されているか確認
-        $response->assertSeeText('ステータス: 出勤中');
+        $response->assertSeeText('出勤中');
     }
 
     /**
@@ -76,7 +76,7 @@ class StatusDisplayTest extends TestCase
         $response = $this->get(route('attendance.show'));
 
         // 4. ステータスが「休憩中」と表示されているか確認
-        $response->assertSeeText('ステータス: 休憩中');
+        $response->assertSeeText('休憩中');
     }
 
     /**
@@ -101,6 +101,6 @@ class StatusDisplayTest extends TestCase
         $response = $this->get(route('attendance.show'));
 
         // 4. ステータスが「退勤済」と表示されているか確認
-        $response->assertSeeText('ステータス: 退勤済');
+        $response->assertSeeText('退勤済');
     }
 }

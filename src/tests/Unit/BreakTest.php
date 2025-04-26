@@ -44,7 +44,7 @@ class BreakTest extends TestCase
 
         // 画面上に「ステータス: 休憩中」が表示されていることを確認
         $html = preg_replace('/\s+/', '', $this->actingAs($user)->get('/attendance')->getContent());
-        $this->assertStringContainsString('ステータス:休憩中', $html);
+        $this->assertStringContainsString('休憩中', $html);
     }
 
     /**

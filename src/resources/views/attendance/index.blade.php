@@ -58,13 +58,13 @@
                         if ($break->break_start && $break->break_end) {
                         $start = \Carbon\Carbon::parse($break->break_start);
                         $end = \Carbon\Carbon::parse($break->break_end);
-                        return $end->diffInMinutes($start); // 1分でも差があれば正しくカウントされる
+                        return $end->diffInMinutes($start);
                         }
                         return 0;
                         });
-                        <span class="arrow">→
-                            echo sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
-                            @endphp
+                        @endphp
+                        <span class="arrow">→</span>
+                        {{ sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60) }}
                     </td>
 
                     <td>
