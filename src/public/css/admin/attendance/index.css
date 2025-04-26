@@ -50,7 +50,7 @@ nav ul li a {
 
 /* メインコンテンツ */
 .container {
-    max-width: 1200px;
+    max-width: 820px;
     margin: 0 auto;
     padding: 40px 20px;
 }
@@ -58,8 +58,9 @@ nav ul li a {
 .title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 30px;
-    padding-left: 10px;
+    margin-bottom: 40px;
+    position: relative;
+    padding-left: 20px;
     border-left: 5px solid #000;
 }
 
@@ -71,25 +72,30 @@ nav ul li a {
     background-color: #fff;
     padding: 15px 20px;
     border-radius: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .date-nav-btn {
-    display: flex;
-    align-items: center;
-    color: #666;
+    color: #828282;
+    font-weight: bold;
+    letter-spacing: 2px;
     text-decoration: none;
+    /* 下線を消す */
 }
 
-.date-nav-btn.prev::before {
-    content: "←";
-    margin-right: 5px;
+.arrow {
+    font-weight: bold;
+    font-size: 22px;
+    /* 太字にする */
+    color: #828282;
+    margin: 3px;
+    /* 矢印と文字の間にちょっと余白 */
 }
 
-.date-nav-btn.next::after {
-    content: "→";
-    margin-left: 5px;
+.selected-date-text {
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .current-date {
@@ -113,25 +119,30 @@ nav ul li a {
 }
 
 .attendance-table th {
-    background-color: #f9f9f9;
-    padding: 15px;
+    background-color: #ffffff;
+    color: #828282;
+    padding: 15px 30px;
+    letter-spacing: 2px;
     text-align: center;
-    font-weight: normal;
-    border-bottom: 1px solid #eee;
+    border-bottom: 3px solid #eee;
 }
 
 .attendance-table td {
     padding: 15px;
+    color: #828282;
+    font-weight: bold;
+    letter-spacing: 2px;
     text-align: center;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid #eee;
 }
 
 .attendance-table tr:hover {
     background-color: #f5f5f5;
 }
 
-.detail-btn {
-    color: #666;
+.detail-link {
+    color: #000000;
+    font-weight: bold;
     text-decoration: none;
 }
 

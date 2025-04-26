@@ -12,15 +12,36 @@
 
     <!-- 日付切り替えナビゲーション -->
     <div class="date-nav">
-        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->subDay()->format('Y-m-d')]) }}" class="date-nav-btn">前日</a>
+        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->subDay()->format('Y-m-d')]) }}" class="date-nav-btn">
+            <span class="arrow">←</span>前日
+        </a>
 
         <!-- カレンダー入力 -->
-        <form method="GET" action="{{ route('admin.attendance.list') }}" style="display: inline-block;">
-            <input type="date" name="date" value="{{ $date }}">
-            <button type="submit">表示</button>
+        <form method="GET" action="{{ route('admin.attendance.list') }}" id="dateForm" style="display: inline-block; position: relative;">
+            <!-- 隠しinput -->
+            <input
+                type="date"
+                name="date"
+                id="dateInput"
+                value="{{ $date }}"
+                style="opacity: 0; position: absolute; left: 0; top: 0; width: 32px; height: 32px; cursor: pointer;"
+                onchange="updateDateAndSubmit(this.value)">
+
+            <!-- アイコンと日付表示エリア -->
+            <div
+                style="display: inline-flex; align-items: center; gap: 10px; font-size: 18px; cursor: pointer;"
+                onclick="document.getElementById('dateInput').showPicker()">
+                📅
+                <span id="selectedDate" class="selected-date-text">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</span>
+            </div>
+
+            <!-- 表示ボタンは削除 -->
+            <!-- <button type="submit" style="margin-left: 8px;">表示</button> -->
         </form>
 
-        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d')]) }}" class="date-nav-btn">翌日</a>
+        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d')]) }}" class="date-nav-btn">
+            翌日<span class="arrow">→</span>
+        </a>
     </div>
 
     <!-- 勤怠情報テーブル -->
@@ -77,3 +98,18 @@
     </table>
 </div>
 @endsection
+
+<!-- JavaScript追加 -->
+<script>
+    function updateDateAndSubmit(value) {
+        // 選んだ日付を表示用に更新
+        const date = new Date(value);
+        const formatted = date.getFullYear() + '/' +
+            String(date.getMonth() + 1).padStart(2, '0') + '/' +
+            String(date.getDate()).padStart(2, '0');
+        document.getElementById('selectedDate').innerText = formatted;
+
+        // フォームを自動送信
+        document.getElementById('dateForm').submit();
+    }
+</script>

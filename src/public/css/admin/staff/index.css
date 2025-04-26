@@ -48,7 +48,7 @@ header {
 
 /* メインコンテンツ */
 .container {
-    max-width: 1200px;
+    max-width: 820px;
     margin: 0 auto;
     padding: 40px 20px;
 }
@@ -56,7 +56,8 @@ header {
 .page-title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 40px;
+    margin-top: 30px;
+    margin-bottom: 50px;
     display: flex;
     align-items: center;
 }
@@ -73,25 +74,31 @@ header {
 /* テーブル */
 .staff-table {
     width: 100%;
-    background-color: #fff;
     border-collapse: collapse;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .staff-table th {
-    padding: 15px;
+    background-color: #ffffff;
+    color: #828282;
+    padding: 15px 80px;
+    letter-spacing: 2px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
-    font-weight: normal;
+    border-bottom: 3px solid #eee;
 }
 
 .staff-table td {
     padding: 15px;
+    color: #828282;
+    font-weight: bold;
+    letter-spacing: 2px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 2px solid #eee;
 }
 
 .detail-link {
-    color: #333;
+    color: #000000;
+    font-weight: bold;
     text-decoration: none;
 }

@@ -7,25 +7,19 @@
 
 body {
     background-color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
 }
 
 .container {
-    width: 100%;
-    max-width: 800px;
+    max-width: 820px;
     margin: 0 auto;
+    padding: 40px 20px;
 }
 
 .title {
     font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 70px;
     position: relative;
-    padding-left: 15px;
+    padding-left: 20px;
 }
 
 .title::before {
@@ -38,40 +32,70 @@ body {
     background-color: #000;
 }
 
-.attendance-table {
-    width: 100%;
+.row {
+    display: flex;
     background-color: #fff;
-    border-collapse: collapse;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.attendance-table tr {
     border-bottom: 1px solid #eee;
+    min-height: 60px;
 }
 
-.attendance-table tr:last-child {
+.row:last-child {
     border-bottom: none;
 }
 
-.attendance-table td {
-    padding: 16px 20px;
-    vertical-align: middle;
+.label {
+    width: 30%;
+    padding: 20px 20px 20px 40px;
+    color: #828282;
+    font-weight: bold;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #eee;
 }
 
-.attendance-table td:first-child {
-    width: 25%;
+.content {
     color: #333;
+    font-weight: bold;
+    letter-spacing: 2px;
+    width: 70%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    border-bottom: 2px solid #eee;
 }
 
-.attendance-table td:nth-child(2) {
-    text-align: left;
+input[type="time"] {
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding: 2px 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 130px;
+    text-align: center;
 }
 
-.time-separator {
-    display: inline-block;
-    margin: 0 10px;
+textarea {
+    color: #000000;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 2px;
+    width: 100%;
+    height: 80px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+}
+
+.time-range {
+    display: flex;
+    align-items: center;
+    gap: 35px;
 }
 
 .button-container {
@@ -81,11 +105,22 @@ body {
 }
 
 .approve-button {
-    background-color: #666;
-    color: white;
-    border: none;
-    padding: 10px 30px;
-    border-radius: 4px;
+    background-color: #000;
+    color: #fff;
     font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 35px;
+    margin-top: 40px;
     cursor: pointer;
+}
+
+.approve-button:hover {
+    background-color: #333;
+}
+
+.remarks-content {
+    width: 390px;
+    padding: 10px 20px 10px 20px;
 }

@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="title">勤怠詳細（管理者）</h1>
+    <h1 class="title">勤怠詳細</h1>
 
     {{-- エラーメッセージ --}}
     @if ($errors->any())
@@ -26,67 +26,115 @@
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- 勤怠修正フォーム --}}
+    @if (isset($attendanceRequest) && $attendanceRequest->status === '承認待ち')
+    {{-- ▼ 承認待ちのため修正不可 --}}
+    <p style="color: red;">承認待ちのため修正はできません。</p>
+    <div class="card">
+        <div class="row">
+            <div class="label">名前</div>
+            <div class="content">{{ $attendance->user->name }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">日付</div>
+            <div class="content">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">出勤・退勤</div>
+            <div class="content">
+                <div class="time-range">
+                    <input type="time" value="{{ optional($attendanceRequest->clock_in)->format('H:i') }}" disabled>
+                    <span>～</span>
+                    <input type="time" value="{{ optional($attendanceRequest->clock_out)->format('H:i') }}" disabled>
+                </div>
+            </div>
+        </div>
+
+        @foreach ($attendanceRequest->requestBreakTimes as $index => $break)
+        <div class="row">
+            <div class="label">休憩{{ $index + 1 }}</div>
+            <div class="content">
+                <div class="time-range">
+                    <input type="time" value="{{ optional($break->break_start)->format('H:i') }}" disabled>
+                    <span>～</span>
+                    <input type="time" value="{{ optional($break->break_end)->format('H:i') }}" disabled>
+                </div>
+            </div>
+        </div>
+        @endforeach
+
+        <div class="row">
+            <div class="label">備考</div>
+            <div class="remarks-content">
+                <textarea disabled>{{ $attendanceRequest->note }}</textarea>
+            </div>
+        </div>
+    </div>
+    @else
+    {{-- ▼ 通常の修正フォーム --}}
     <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <table class="attendance-table">
-            <tr>
-                <td>名前</td>
-                <td>{{ $attendance->user->name }}</td>
-            </tr>
-            <tr>
-                <td>日付</td>
-                <td>
-                    <span class="year">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y') }}年</span>
-                    <span class="month-day">{{ \Carbon\Carbon::parse($attendance->work_date)->format('n月j日') }}</span>
-                </td>
-            </tr>
-            <tr>
-                <td>出勤・退勤</td>
-                <td>
-                    <input type="time" name="clock_in" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
-                    ～
-                    <input type="time" name="clock_out" value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}">
-                </td>
-            </tr>
+        <div class="card">
+            <div class="row">
+                <div class="label">名前</div>
+                <div class="content">{{ $attendance->user->name }}</div>
+            </div>
 
-            {{-- 休憩時間（複数対応） --}}
+            <div class="row">
+                <div class="label">日付</div>
+                <div class="content">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</div>
+            </div>
+
+            <div class="row">
+                <div class="label">出勤・退勤</div>
+                <div class="content">
+                    <div class="time-range">
+                        <input type="time" name="clock_in" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
+                        <span>～</span>
+                        <input type="time" name="clock_out" value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}">
+                    </div>
+                </div>
+            </div>
+
             @foreach ($attendance->breakTimes as $index => $break)
-            <tr>
-                <td>休憩{{ $index + 1 }}</td>
-                <td>
-                    <input type="time" name="break_start[]" value="{{ old("break_start.$index", optional($break->break_start)->format('H:i')) }}">
-                    ～
-                    <input type="time" name="break_end[]" value="{{ old("break_end.$index", optional($break->break_end)->format('H:i')) }}">
-                </td>
-            </tr>
+            <div class="row">
+                <div class="label">休憩{{ $index + 1 }}</div>
+                <div class="content">
+                    <div class="time-range">
+                        <input type="time" name="break_start[]" value="{{ optional($break->break_start)->format('H:i') }}">
+                        <span>～</span>
+                        <input type="time" name="break_end[]" value="{{ optional($break->break_end)->format('H:i') }}">
+                    </div>
+                </div>
+            </div>
             @endforeach
 
-            {{-- 空の休憩追加欄（1枠） --}}
-            <tr>
-                <td>休憩{{ count($attendance->breakTimes) + 1 }}</td>
-                <td>
-                    <input type="time" name="break_start[]" value="">
-                    ～
-                    <input type="time" name="break_end[]" value="">
-                </td>
-            </tr>
+            <div class="row">
+                <div class="label">休憩{{ count($attendance->breakTimes) + 1 }}</div>
+                <div class="content">
+                    <div class="time-range">
+                        <input type="time" name="break_start[]" value="">
+                        <span>～</span>
+                        <input type="time" name="break_end[]" value="">
+                    </div>
+                </div>
+            </div>
 
-            {{-- 備考欄 --}}
-            <tr>
-                <td>備考</td>
-                <td>
+            <div class="row">
+                <div class="label">備考</div>
+                <div class="remarks-content">
                     <textarea name="note">{{ old('note', $attendance->note) }}</textarea>
-                </td>
-            </tr>
-        </table>
+                </div>
+            </div>
+        </div>
 
-        {{-- 修正ボタン --}}
         <div class="button-container">
-            <button type="submit" class="edit-button">修正</button>
+            <button type="submit" class="approve-button">修正</button>
         </div>
     </form>
+    @endif
 </div>
 @endsection

@@ -62,9 +62,9 @@
                         }
                         return 0;
                         });
-
-                        echo sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
-                        @endphp
+                        <span class="arrow">→
+                            echo sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
+                            @endphp
                     </td>
 
                     <td>
