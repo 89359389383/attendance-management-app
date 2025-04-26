@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="title">修正申請詳細（承認）</h1>
+    <h1 class="title">勤怠詳細</h1>
 
     {{-- 成功・エラー表示 --}}
     @if (session('success'))
@@ -18,66 +18,76 @@
     <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    {{-- 修正申請の詳細表示テーブル --}}
-    <table class="attendance-table">
-        <tr>
-            <td>名前</td>
-            <td>{{ $request->user->name }}</td>
-        </tr>
-        <tr>
-            <td>日付</td>
-            <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y年n月j日') }}</td>
-        </tr>
-        <tr>
-            <td>出勤・退勤</td>
-            <td>
+    {{-- 修正申請の詳細表示 --}}
+    <div class="card">
+
+        <div class="row">
+            <div class="label">名前</div>
+            <div class="content">{{ $request->user->name }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">日付</div>
+            <div class="content">{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y年n月j日') }}</div>
+        </div>
+
+        <div class="row">
+            <div class="label">出勤・退勤</div>
+            <div class="content">
                 {{ \Carbon\Carbon::parse($request->clock_in)->format('H:i') }}
                 <span class="time-separator">～</span>
                 {{ \Carbon\Carbon::parse($request->clock_out)->format('H:i') }}
-            </td>
-        </tr>
+            </div>
+        </div>
 
         {{-- 修正申請された休憩時間を表示（複数対応） --}}
         @foreach ($request->requestBreakTimes as $index => $break)
-        <tr>
-            <td>休憩{{ $index + 1 }}</td>
-            <td>
+        <div class="row">
+            <div class="label">休憩{{ $index + 1 }}</div>
+            <div class="content">
                 {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }}
                 <span class="time-separator">～</span>
                 {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}
-            </td>
-        </tr>
+            </div>
+        </div>
         @endforeach
 
-        <tr>
-            <td>備考</td>
-            <td>{{ $request->note }}</td>
-        </tr>
+        <div class="row">
+            <div class="label">備考</div>
+            <div class="content">
+                {{ $request->note }}
+            </div>
+        </div>
 
         @if($request->status === 'approved')
-        <tr>
-            <td>承認者</td>
-            <td>{{ optional($request->approvedByUser)->name }}</td>
-        </tr>
-        <tr>
-            <td>承認日時</td>
-            <td>{{ \Carbon\Carbon::parse($request->approved_at)->format('Y年n月j日 H:i') }}</td>
-        </tr>
-        @endif
-    </table>
+        <div class="row">
+            <div class="label">承認者</div>
+            <div class="content">
+                {{ optional($request->approvedByUser)->name }}
+            </div>
+        </div>
 
-    {{-- 承認ボタン（承認済みでない場合のみ表示） --}}
-    @if($request->status === '承認待ち')
+        <div class="row">
+            <div class="label">承認日時</div>
+            <div class="content">
+                {{ \Carbon\Carbon::parse($request->approved_at)->format('Y年n月j日 H:i') }}
+            </div>
+        </div>
+        @endif
+
+    </div>
+
+    {{-- 承認ボタン --}}
     <div class="button-container">
+        @if($request->status === '承認待ち')
         <form method="POST" action="{{ route('admin.request.approve', $request->id) }}">
             @csrf
             <button type="submit" class="approve-button">承認する</button>
         </form>
+        @else
+        <button class="approve-button-approved" disabled>承認済み</button>
+        @endif
     </div>
-    @else
-    <div class="button-container">
-        <button class="approve-button" disabled>承認済み</button>
-    </div>
-    @endif
+
 </div>
 @endsection

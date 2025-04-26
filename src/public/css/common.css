@@ -86,8 +86,10 @@ body {
 .header-link {
     color: #fff;
     text-decoration: none;
-    margin-left: 1rem;
+    margin-right: 30px;
+    margin-left: 20px;
     font-size: 20px;
+    font-weight: bold;
     background-color: #000;
     border: none;
 }

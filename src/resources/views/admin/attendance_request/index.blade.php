@@ -18,15 +18,14 @@
 
     {{-- 承認待ち一覧 --}}
     <div id="pending" class="tab-content">
-        <h2>承認待ち</h2>
         <table>
             <thead>
                 <tr>
                     <th>状態</th>
                     <th>名前</th>
-                    <th>対象日</th>
+                    <th>対象日時</th>
                     <th>申請理由</th>
-                    <th>申請日</th>
+                    <th>申請日時</th>
                     <th>詳細</th>
                 </tr>
             </thead>
@@ -40,7 +39,7 @@
                     <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
                     <td>
                         {{-- 修正申請詳細へ遷移するボタン --}}
-                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="btn btn-sm btn-primary">詳細</a>
+                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @empty
@@ -54,7 +53,6 @@
 
     {{-- 承認済み一覧 --}}
     <div id="approved" class="tab-content" style="display: none;">
-        <h2>承認済み</h2>
         <table>
             <thead>
                 <tr>
@@ -76,7 +74,7 @@
                     <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
                     <td>
                         {{-- 承認済みの詳細表示（承認ボタンは出ない） --}}
-                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="btn btn-sm btn-secondary">詳細</a>
+                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @empty
