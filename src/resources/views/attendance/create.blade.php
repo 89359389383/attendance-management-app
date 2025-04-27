@@ -38,7 +38,7 @@
 
         {{-- 休憩戻り：ステータスが休憩中なら常に表示（何回でもOK） --}}
         @if(($attendance->status ?? '') === '休憩中')
-        <button type="submit" name="action" value="break_end" class="button-break">休憩戻</button>
+        <button type="submit" name="action" value="break_end" class="button-break-back">休憩戻</button>
         @endif
 
         {{-- ステータスが退勤済みの場合はメッセージを表示 --}}

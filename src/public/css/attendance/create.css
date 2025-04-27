@@ -52,6 +52,7 @@ body {
     border: none;
     border-radius: 14px;
     padding: 10px 60px;
+    margin-left: 25px;
     letter-spacing: 2px;
     font-size: 22px;
     font-weight: bold;
@@ -64,6 +65,20 @@ body {
 }
 
 .button-break {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 14px;
+    padding: 10px 60px;
+    margin-left: 40px;
+    letter-spacing: 2px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.button-break-back {
     background-color: #ffffff;
     color: #000000;
     border: none;
