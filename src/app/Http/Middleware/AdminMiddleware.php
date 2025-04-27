@@ -10,7 +10,7 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check() || !Auth::user()->is_admin) {
+        if (!Auth::guard('admin')->check() || !Auth::guard('admin')->user()->is_admin) {
             // 管理者じゃなかったら管理者用ログインページにリダイレクト
             return redirect()->route('admin.login.show');
         }

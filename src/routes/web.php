@@ -57,7 +57,7 @@ Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.
 // =====================
 // 認証が必要な管理者機能
 // =====================
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth:admin', 'admin'])->group(function () {
     // 管理者による勤怠一覧
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.list');
 
