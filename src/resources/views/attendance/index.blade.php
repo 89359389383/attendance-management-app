@@ -63,7 +63,6 @@
                         return 0;
                         });
                         @endphp
-                        <span class="arrow">→</span>
                         {{ sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60) }}
                     </td>
 

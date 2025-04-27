@@ -147,31 +147,136 @@ nav ul li a {
 }
 
 /* レスポンシブ対応 */
-@media (max-width: 768px) {
+/* ===========================================================
+【PCサイズ対応】（幅1400px〜1540pxの間で見た目が崩れないように調整）
+=========================================================== */
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .container {
+        /* コンテンツ幅を少し広めにしてバランスをとる */
+        max-width: 1000px;
+        padding: 40px 30px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        /* テーブルのセルも少し広げて窮屈さを防ぐ */
+        padding: 20px 35px;
+    }
+
+    .title {
+        /* タイトルに余裕を持たせる */
+        font-size: 28px;
+    }
+
+    .date-nav {
+        /* 日付ナビも少し大きめに */
+        padding: 20px 30px;
+    }
+
+    .selected-date-text {
+        /* 日付表示も少しだけ大きくする */
+        font-size: 20px;
+    }
+}
+
+/* ===========================================================
+【タブレットサイズ対応】（幅768px〜850pxで崩れないように調整）
+=========================================================== */
+@media (min-width: 768px) and (max-width: 850px) {
+    .container {
+        /* タブレットは少し左右に余白を広くとる */
+        padding: 30px 20px;
+    }
+
+    .title {
+        /* タイトルフォントを少し小さめにしてバランス調整 */
+        font-size: 22px;
+        padding-left: 15px;
+        border-left: 4px solid #000;
+        /* タイトル横の線も細く */
+    }
+
+    .date-nav {
+        /* 日付ナビゲーションのpaddingを少し縮める */
+        padding: 10px 15px;
+        gap: 15px;
+        /* ボタン同士の間隔を広めにする */
+    }
+
+    .date-nav-btn {
+        /* 前日・翌日ボタンの文字サイズを少し小さめに */
+        font-size: 14px;
+    }
+
+    .selected-date-text {
+        /* 日付表示を少し小さめに */
+        font-size: 16px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        /* テーブル内のパディングを小さめにしてスッキリさせる */
+        padding: 12px 20px;
+        font-size: 14px;
+        /* テキストも若干小さくする */
+    }
+
+    .detail-link {
+        /* 詳細リンクもフォントサイズを小さく */
+        font-size: 14px;
+    }
+}
+
+/* ===========================================================
+【スマホ対応】（幅767px以下で見た目が崩れないように調整）
+=========================================================== */
+@media (max-width: 767px) {
     header {
+        /* ヘッダーは縦並びに */
         flex-direction: column;
         padding: 10px;
     }
 
     nav ul {
         margin-top: 10px;
+        flex-wrap: wrap;
+        /* ナビリンクを折り返せるように */
+        justify-content: center;
     }
 
     nav ul li {
-        margin-left: 10px;
+        margin: 5px;
     }
 
-    .date-nav {
-        flex-direction: column;
-        gap: 10px;
+    .container {
+        /* コンテンツの左右余白をさらに狭める */
+        padding: 20px 10px;
+    }
+
+    .title {
+        /* タイトルをさらに小さく */
+        font-size: 20px;
+        padding-left: 10px;
+        border-left: 3px solid #000;
+        margin-bottom: 20px;
+    }
+
+    .selected-date-text {
+        font-size: 14px;
     }
 
     .attendance-table {
-        font-size: 14px;
+        /* テーブルフォントも小さめに */
+        font-size: 13px;
     }
 
     .attendance-table th,
     .attendance-table td {
         padding: 10px 5px;
+        font-size: 13px;
+    }
+
+    .detail-link {
+        font-size: 13px;
     }
 }

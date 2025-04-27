@@ -107,3 +107,100 @@ body {
     letter-spacing: 2px;
     margin-left: 20px;
 }
+
+/* ===========================================================
+【PCサイズ対応】（幅1400px〜1540px）
+=========================================================== */
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .container {
+        /* PCでは最大幅を広げて中央揃えを保つ */
+        max-width: 600px;
+    }
+
+    .time {
+        /* 時計の数字をより大きくして見栄えアップ */
+        font-size: 90px;
+    }
+
+    .button,
+    .button-break,
+    .button-break-back {
+        /* ボタンをやや大きくして余裕を持たせる */
+        font-size: 24px;
+        padding: 12px 70px;
+    }
+}
+
+/* ===========================================================
+【タブレットサイズ対応】（幅768px〜850px）
+=========================================================== */
+@media (min-width: 768px) and (max-width: 850px) {
+    .container {
+        /* タブレットは中央寄せを維持しつつ、少しだけ余白を増やす */
+        padding: 20px;
+        margin: 80px auto;
+    }
+
+    .date {
+        /* 日付サイズを少しだけ縮小 */
+        font-size: 26px;
+    }
+
+    .time {
+        /* 時刻をやや小さくしてバランスを取る */
+        font-size: 70px;
+    }
+
+    .button,
+    .button-break,
+    .button-break-back {
+        /* ボタンサイズもややコンパクトに調整 */
+        font-size: 20px;
+        padding: 10px 50px;
+    }
+}
+
+/* ===========================================================
+【スマホサイズ対応】（〜767px）
+=========================================================== */
+@media (max-width: 767px) {
+    .container {
+        /* スマホでは余白を広めにとって見やすく */
+        padding: 15px;
+        margin: 60px auto;
+        max-width: 90%;
+    }
+
+    .status-badge {
+        /* ステータスバッジをスマホに合わせて小さめに */
+        font-size: 12px;
+        padding: 5px 12px;
+    }
+
+    .date {
+        /* 日付のフォントサイズ縮小 */
+        font-size: 22px;
+    }
+
+    .time {
+        /* 時刻も縮小、スマホ画面に収まるように */
+        font-size: 50px;
+        margin-bottom: 30px;
+    }
+
+    .button,
+    .button-break,
+    .button-break-back {
+        /* ボタンも小さく調整、横幅を広げすぎない */
+        font-size: 18px;
+        padding: 10px 30px;
+        margin-left: 10px;
+        /* 左マージンも縮小 */
+    }
+
+    .message {
+        /* お疲れ様メッセージもコンパクトに */
+        font-size: 18px;
+        margin-left: 10px;
+    }
+}

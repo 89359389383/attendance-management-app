@@ -100,3 +100,143 @@ td {
 tr:hover {
     background-color: #f9f9f9;
 }
+
+/* ===========================================================
+【PCサイズ対応】（幅1400px〜1540pxで崩れないように調整）
+=========================================================== */
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .container {
+        /* コンテンツ幅を少し広げる（デスクトップ表示がよりバランスよくなる） */
+        max-width: 1200px;
+        padding: 40px 30px;
+    }
+
+    table th,
+    table td {
+        /* テーブル内セルのパディングも広めにとる */
+        padding: 20px 40px;
+    }
+
+    h1 {
+        /* タイトルも少し大きくする */
+        font-size: 28px;
+    }
+}
+
+/* ===========================================================
+【タブレットサイズ対応】（幅768px〜850pxで崩れないように調整）
+=========================================================== */
+@media (min-width: 768px) and (max-width: 850px) {
+    .container {
+        /* タブレットは左右のパディングを調整（スマホ寄りに） */
+        padding: 30px 15px;
+    }
+
+    h1 {
+        /* タイトルフォントを少し小さくして詰まり防止 */
+        font-size: 22px;
+        padding-left: 15px;
+    }
+
+    h1::before {
+        /* タイトル横線も細めにする */
+        width: 4px;
+    }
+
+    .tabs {
+        /* タブの間隔を狭くしてバランス調整 */
+        gap: 5px;
+        flex-wrap: wrap;
+        /* タブが多いときに折り返しできるようにする */
+    }
+
+    .tab-button {
+        /* タブボタンのパディングを少し小さく */
+        padding: 8px 20px;
+        font-size: 14px;
+    }
+
+    .tab-button.active {
+        /* アクティブ時も同様に小さめ */
+        padding: 8px 20px;
+        font-size: 14px;
+    }
+
+    table th,
+    table td {
+        /* テーブルのセル間のスペースをやや縮める */
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .detail-link {
+        /* 詳細リンクもフォントサイズを小さくしてスマートに見せる */
+        font-size: 14px;
+    }
+}
+
+/* ===========================================================
+【スマホサイズ対応】（幅767px以下で崩れないように調整）
+=========================================================== */
+@media (max-width: 767px) {
+    .container {
+        /* スマホではさらに左右パディングを狭める */
+        padding: 20px 10px;
+    }
+
+    h1 {
+        /* タイトル文字をさらに小さくする（スマホ向け） */
+        font-size: 20px;
+        padding-left: 10px;
+    }
+
+    h1::before {
+        /* タイトル横の線もさらに細くする */
+        width: 3px;
+    }
+
+    .tabs {
+        /* タブ切り替えは縦並びにする（スマホの狭い幅に対応） */
+        flex-direction: column;
+        align-items: stretch;
+        border-bottom: none;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .tab-button {
+        /* タブボタンは全幅にして押しやすくする */
+        width: 100%;
+        padding: 10px 0;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        text-align: center;
+    }
+
+    .tab-button.active {
+        /* アクティブタブは背景を変えて強調 */
+        background-color: #e0e0e0;
+        font-weight: bold;
+    }
+
+    table {
+        /* テーブルは横スクロールできるようにする（スマホ幅では列が入りきらないため） */
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    th,
+    td {
+        /* テーブル内セルのパディングを最小限にする */
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+
+    .detail-link {
+        /* 詳細リンクもスマホに合わせて小さめに */
+        font-size: 12px;
+    }
+}

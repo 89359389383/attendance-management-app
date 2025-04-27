@@ -249,3 +249,153 @@ nav ul li a {
         padding: 10px 5px;
     }
 }
+
+/* レスポンシブ対応 */
+/* ===========================================================
+【PCサイズ対応】（幅1400px〜1540pxの間で見た目が崩れないように調整）
+=========================================================== */
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .container {
+        /* コンテンツ幅を少し広めにしてバランスをとる */
+        max-width: 1000px;
+        padding: 40px 30px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        /* テーブルのセルも広げて余裕を持たせる */
+        padding: 20px 35px;
+    }
+
+    .title {
+        /* タイトルに余裕を持たせる */
+        font-size: 28px;
+    }
+
+    .month-selector {
+        /* 月選択ナビも少し大きめに */
+        padding: 20px 30px;
+    }
+
+    .month-display {
+        /* 月表示も少しだけ大きくする */
+        font-size: 20px;
+    }
+
+    .btn.btn-primary {
+        /* CSV出力ボタンも少し大きくして見やすくする */
+        font-size: 18px;
+        padding: 8px 25px;
+    }
+}
+
+/* ===========================================================
+【タブレットサイズ対応】（幅768px〜850pxで崩れないように調整）
+=========================================================== */
+@media (min-width: 768px) and (max-width: 850px) {
+    .container {
+        /* タブレットでは左右余白を広くしてバランス調整 */
+        padding: 30px 20px;
+    }
+
+    .title {
+        /* タイトルを少し小さく、線も細く */
+        font-size: 22px;
+        padding-left: 15px;
+    }
+
+    .title::before {
+        width: 4px;
+    }
+
+    .month-selector {
+        /* 月選択ナビのpaddingを小さく */
+        padding: 12px 18px;
+    }
+
+    .month-display {
+        /* 月表示も小さめに調整 */
+        font-size: 16px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        /* テーブル内のパディングと文字サイズを小さくしてスッキリ */
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+
+    .btn.btn-primary {
+        /* ボタンもやや小さく */
+        font-size: 16px;
+        padding: 6px 20px;
+    }
+
+    .detail-link {
+        /* 詳細リンクも文字を小さめに */
+        font-size: 14px;
+    }
+}
+
+/* ===========================================================
+【スマホ対応】（幅767px以下で見た目が崩れないように調整）
+=========================================================== */
+@media (max-width: 767px) {
+    header {
+        /* ヘッダーを縦並びにする */
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    nav ul {
+        /* ナビメニューを中央寄せ＆折り返し可能に */
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    nav ul li {
+        margin: 5px;
+    }
+
+    .container {
+        /* コンテンツ余白をさらに狭める */
+        padding: 20px 10px;
+    }
+
+    .title {
+        /* タイトルをさらに小さく、線も細く */
+        font-size: 20px;
+        padding-left: 10px;
+        margin-bottom: 20px;
+    }
+
+    .title::before {
+        width: 3px;
+    }
+
+    .month-display {
+        font-size: 14px;
+    }
+
+    .attendance-table {
+        /* テーブルフォントも小さめに */
+        font-size: 13px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        padding: 10px 5px;
+        font-size: 13px;
+    }
+
+    .btn.btn-primary {
+        /* CSVボタンも小さく */
+        font-size: 14px;
+        padding: 5px 15px;
+    }
+
+    .detail-link {
+        font-size: 13px;
+    }
+}

@@ -124,3 +124,194 @@ textarea {
     width: 390px;
     padding: 10px 20px 10px 20px;
 }
+
+/* ===========================================================
+【PCサイズ対応】（幅1400px〜1540pxの間で崩れないように調整）
+=========================================================== */
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .container {
+        /* PCでは少し広めにして見た目に余裕を持たせる */
+        max-width: 1000px;
+        padding: 50px 30px;
+    }
+
+    .title {
+        /* タイトルも大きめにしてバランスを取る */
+        font-size: 28px;
+    }
+
+    .label,
+    .content {
+        /* ラベルとコンテンツのパディングを広げて見やすく */
+        padding: 25px 30px;
+    }
+
+    input[type="time"],
+    textarea {
+        /* 入力フィールドを少し大きめにする */
+        font-size: 16px;
+        width: 150px;
+    }
+
+    .remarks-content {
+        /* 備考欄も幅を広げる */
+        width: 450px;
+    }
+
+    .approve-button {
+        /* ボタンも大きく見せる */
+        font-size: 18px;
+        padding: 12px 40px;
+    }
+}
+
+/* ===========================================================
+【タブレットサイズ対応】（幅768px〜850pxで崩れないように調整）
+=========================================================== */
+@media (min-width: 768px) and (max-width: 850px) {
+    .container {
+        /* タブレット用に左右余白を調整 */
+        padding: 30px 20px;
+    }
+
+    .title {
+        /* タイトルのフォントサイズを若干小さめに調整 */
+        font-size: 22px;
+        padding-left: 15px;
+    }
+
+    .title::before {
+        /* タイトル横の線も細く */
+        width: 3px;
+    }
+
+    .label,
+    .content {
+        /* ラベルとコンテンツをコンパクトにする */
+        min-height: 50px;
+        padding: 15px 20px;
+        font-size: 14px;
+    }
+
+    input[type="time"] {
+        /* 時刻入力フィールドを少し小さめに */
+        font-size: 14px;
+        width: 120px;
+    }
+
+    textarea {
+        /* テキストエリアも若干小さめ */
+        font-size: 14px;
+        height: 70px;
+    }
+
+    .time-range {
+        /* 時間範囲間の間隔を縮める */
+        gap: 20px;
+    }
+
+    .remarks-content {
+        /* 備考欄も少し狭めにする */
+        width: 350px;
+        padding: 8px 15px;
+    }
+
+    .approve-button {
+        /* ボタンもやや小さめ */
+        font-size: 14px;
+        padding: 10px 30px;
+    }
+}
+
+/* ===========================================================
+【スマホ対応】（幅0px〜767pxで崩れないように調整）
+=========================================================== */
+@media (max-width: 767px) {
+    .container {
+        /* スマホでは全幅近く使う */
+        max-width: 100%;
+        padding: 20px 10px;
+    }
+
+    .title {
+        /* タイトルフォントをさらに小さく */
+        font-size: 20px;
+        margin-bottom: 40px;
+        padding-left: 10px;
+    }
+
+    .title::before {
+        /* タイトル左側の線もさらに細く */
+        width: 3px;
+    }
+
+    .card {
+        /* カード全体も丸みをつけてスッキリさせる */
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .label,
+    .content {
+        /* ラベルとコンテンツを縦並びにしてスペース節約 */
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .label {
+        /* ラベルは太字でやや目立たせる */
+        font-weight: bold;
+        color: #666;
+    }
+
+    .content {
+        /* コンテンツも同じ幅に揃える */
+        font-weight: normal;
+    }
+
+    .time-range {
+        /* 休憩時間間隔をさらに縮める */
+        gap: 15px;
+    }
+
+    input[type="time"] {
+        /* 時刻入力もさらに小さくする */
+        width: 100px;
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+
+    textarea {
+        /* テキストエリアもコンパクトに */
+        width: 100%;
+        height: 60px;
+        font-size: 12px;
+    }
+
+    .remarks-content {
+        /* 備考欄も全幅使ってコンパクトに */
+        width: 100%;
+        padding: 5px 10px;
+    }
+
+    .approve-button {
+        /* 修正ボタンもスマホ向けに小さめ */
+        font-size: 14px;
+        padding: 8px 20px;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .button-container {
+        /* ボタンを中央寄せに */
+        justify-content: center;
+    }
+
+    .alert {
+        /* エラーメッセージや成功メッセージも見やすく */
+        font-size: 14px;
+        padding: 10px;
+    }
+}
