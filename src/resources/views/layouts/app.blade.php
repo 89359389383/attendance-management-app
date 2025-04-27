@@ -25,23 +25,23 @@
         !Request::is('email/verify') &&
         !Request::is('admin/login')
         )
-        @if (Request::is('attendance') || Request::is('attendance/*') || Request::is('stamp_correction_request*'))
-        {{-- 一般ユーザー向け --}}
-        <div class="header-right">
-            <a href="{{ route('attendance.show') }}" class="header-link">勤怠</a>
-            <a href="{{ route('attendance.list') }}" class="header-link">勤怠一覧</a>
-            <a href="/stamp_correction_request/list" class="header-link">申請</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="header-link">ログアウト</button>
-            </form>
-        </div>
-        @elseif (Request::is('admin/*'))
+        @if (auth()->check() && auth()->user()->is_admin)
         {{-- 管理者向けメニュー --}}
         <div class="header-right">
             <a href="{{ route('admin.attendance.list') }}" class="header-link">勤怠一覧</a>
             <a href="{{ route('admin.staff.list') }}" class="header-link">スタッフ一覧</a>
             <a href="{{ route('admin.request.list') }}" class="header-link">申請一覧</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="header-link">ログアウト</button>
+            </form>
+        </div>
+        @else
+        {{-- 一般ユーザー向けメニュー --}}
+        <div class="header-right">
+            <a href="{{ route('attendance.show') }}" class="header-link">勤怠</a>
+            <a href="{{ route('attendance.list') }}" class="header-link">勤怠一覧</a>
+            <a href="{{ route('request.list') }}" class="header-link">申請</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="header-link">ログアウト</button>

@@ -39,6 +39,7 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
+                'is_admin' => false,
             ]);
             Log::info('ユーザー作成成功', ['user_id' => $user->id]);
 
@@ -100,10 +101,14 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        // 現在ログイン中のユーザーをログアウト
+        $redirectUrl = '/login'; // デフォルトは一般ユーザー用
+
+        if (auth()->check() && auth()->user()->is_admin) {
+            $redirectUrl = '/admin/login'; // 管理者なら管理者ログインへ
+        }
+
         Auth::logout();
 
-        // ログイン画面にリダイレクトし、ログアウト完了メッセージを表示
-        return redirect('/login')->with('success', 'ログアウトしました。');
+        return redirect($redirectUrl)->with('success', 'ログアウトしました。');
     }
 }
