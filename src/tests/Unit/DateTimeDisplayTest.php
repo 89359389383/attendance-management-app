@@ -20,14 +20,16 @@ class DateTimeDisplayTest extends TestCase
         $user = User::factory()->create()->first();
 
         // 2. 現在日時を取得（ビューのフォーマットに合わせる）
-        $today = Carbon::now()->format('Y年n月j日(D)'); // 例: 2025年4月23日(Wed)
-        $time = Carbon::now()->format('H:i');           // 例: 21:55
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $today = Carbon::now();
+        $formattedDate = $today->format('Y年n月j日') . '(' . $weekdays[$today->dayOfWeek] . ')'; // 日本語の曜日を表示
+        $time = $today->format('H:i'); // 時刻
 
         // 3. ログインして勤怠打刻画面へアクセス
         $response = $this->actingAs($user)->get(route('attendance.show'));
 
         // 4. 日付と時間が画面に表示されていることを確認（個別にチェック）
-        $response->assertSee($today);
+        $response->assertSee($formattedDate);
         $response->assertSee($time);
     }
 }

@@ -55,7 +55,13 @@
         <tbody>
             @forelse ($attendances as $attendance)
             <tr>
-                <td class="date-cell">{{ \Carbon\Carbon::parse($attendance->work_date)->format('m/d(D)') }}</td>
+                <td class="date-cell">
+                    @php
+                    $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+                    $workDate = \Carbon\Carbon::parse($attendance->work_date);
+                    @endphp
+                    {{ $workDate->format('m/d') }}({{ $weekdays[$workDate->dayOfWeek] }})
+                </td>
                 <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}</td>
                 <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</td>
                 <td>

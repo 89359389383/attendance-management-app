@@ -19,7 +19,7 @@ class AttendanceListUserTest extends TestCase
     public function test_user_can_see_their_own_attendance_records()
     {
         // 1. ユーザーを作成
-        $user = User::factory()->create();
+        $user = User::factory()->create()->first();
 
         // 2. ユーザーに対して、今月の1〜3日の勤怠情報を明示的に3件作成
         foreach ([1, 2, 3] as $day) {
@@ -43,7 +43,7 @@ class AttendanceListUserTest extends TestCase
     public function test_current_month_is_displayed_on_attendance_list()
     {
         // 1. ユーザーを作成
-        $user = User::factory()->create();
+        $user = User::factory()->create()->first();
 
         // 2. 勤怠一覧ページにアクセス
         $response = $this->actingAs($user)->get(route('attendance.list'));
@@ -64,7 +64,7 @@ class AttendanceListUserTest extends TestCase
     public function test_previous_month_attendance_is_displayed()
     {
         // 1. ユーザーを作成
-        $user = User::factory()->create();
+        $user = User::factory()->create()->first();
 
         // 2. 前月の日付を取得
         $previousMonth = Carbon::now()->subMonth()->format('Y-m');
@@ -82,7 +82,10 @@ class AttendanceListUserTest extends TestCase
         $response->assertStatus(200);
 
         // 6. 前月の勤怠情報が表示されていることを確認
-        $response->assertSee(Carbon::parse($attendance->work_date)->format('m/d'));
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $workDate = Carbon::parse($attendance->work_date);
+        $formattedDate = $workDate->format('m/d') . '(' . $weekdays[$workDate->dayOfWeek] . ')'; // 日本語曜日
+        $response->assertSee($formattedDate);
     }
 
     /**
@@ -91,7 +94,7 @@ class AttendanceListUserTest extends TestCase
     public function test_next_month_attendance_is_displayed()
     {
         // 1. ユーザーを作成
-        $user = User::factory()->create();
+        $user = User::factory()->create()->first();
 
         // 2. 翌月の日付を取得
         $nextMonth = Carbon::now()->addMonth()->format('Y-m');
@@ -109,7 +112,10 @@ class AttendanceListUserTest extends TestCase
         $response->assertStatus(200);
 
         // 6. 翌月の勤怠情報が表示されていることを確認
-        $response->assertSee(Carbon::parse($attendance->work_date)->format('m/d'));
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $workDate = Carbon::parse($attendance->work_date);
+        $formattedDate = $workDate->format('m/d') . '(' . $weekdays[$workDate->dayOfWeek] . ')'; // 日本語曜日
+        $response->assertSee($formattedDate);
     }
 
     /**
@@ -118,7 +124,7 @@ class AttendanceListUserTest extends TestCase
     public function test_clicking_detail_button_redirects_to_detail_page()
     {
         // 1. ユーザーを作成
-        $user = User::factory()->create();
+        $user = User::factory()->create()->first();
 
         // 2. 勤怠情報を作成
         $attendance = Attendance::factory()->create([

@@ -14,7 +14,14 @@
     </div>
 
     {{-- 日付・時刻を現在日時で表示 --}}
-    <div class="date">{{ \Carbon\Carbon::now()->format('Y年n月j日(D)') }}</div>
+    <div class="date">
+        @php
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $now = \Carbon\Carbon::now();
+        @endphp
+        {{ $now->format('Y年n月j日') }}({{ $weekdays[$now->dayOfWeek] }})
+    </div>
+
     <div class="time" id="current-time">{{ \Carbon\Carbon::now()->format('H:i:s') }}</div>
 
     {{-- 勤怠打刻フォーム --}}
