@@ -18,10 +18,13 @@ class UserInfoAdminTest extends TestCase
     public function test_admin_can_view_all_staff_names_and_emails()
     {
         // 1. 管理者ユーザーを作成
+        /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
         // 2. 一般ユーザーを複数作成
+        /** @var \App\Models\User $user1 */
         $user1 = User::factory()->create(['name' => '一般ユーザー1', 'email' => 'user1@example.com']);
+        /** @var \App\Models\User $user2 */
         $user2 = User::factory()->create(['name' => '一般ユーザー2', 'email' => 'user2@example.com']);
 
         // 3. 管理者としてログインしスタッフ一覧ページにアクセス
@@ -41,9 +44,11 @@ class UserInfoAdminTest extends TestCase
     public function test_admin_can_view_monthly_attendance_for_selected_user()
     {
         // 1. 管理者ユーザーを作成
+        /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
         // 2. 一般ユーザーと勤怠データを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create(['name' => '勤怠ユーザー']);
         Attendance::factory()->create([
             'user_id' => $user->id,
@@ -69,9 +74,11 @@ class UserInfoAdminTest extends TestCase
     public function test_previous_month_button_displays_previous_month_data()
     {
         // 1. 管理者ユーザーを作成
+        /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
         // 2. 前月の日付と勤怠情報を持つユーザーを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create(['name' => '前月ユーザー']);
         $lastMonth = Carbon::now()->subMonth()->format('Y-m');
         Attendance::factory()->create([
@@ -101,9 +108,11 @@ class UserInfoAdminTest extends TestCase
     public function test_next_month_button_displays_next_month_data()
     {
         // 1. 管理者ユーザーを作成
+        /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
         // 2. 翌月の勤怠情報を持つユーザーを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create(['name' => '翌月ユーザー']);
         $nextMonth = Carbon::now()->addMonth()->format('Y-m');
         Attendance::factory()->create([
@@ -133,9 +142,11 @@ class UserInfoAdminTest extends TestCase
     public function test_clicking_detail_link_redirects_to_attendance_detail()
     {
         // 1. 管理者ユーザーを作成
+        /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
         // 2. 勤怠データを持つユーザーを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,

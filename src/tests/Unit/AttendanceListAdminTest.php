@@ -19,7 +19,7 @@ class AttendanceListAdminTest extends TestCase
     public function test_admin_can_see_all_attendance_for_the_day()
     {
         // 1. 管理者ユーザーを作成
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_admin' => true])->first();
 
         // 2. 一般ユーザーを2名作成し、勤怠情報を登録
         $user1 = User::factory()->create(['name' => 'ユーザーA']);
@@ -56,7 +56,7 @@ class AttendanceListAdminTest extends TestCase
     public function test_current_date_is_displayed_on_attendance_list()
     {
         // 1. 管理者ユーザーを作成
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_admin' => true])->first();
 
         // 2. 今日の日付を取得（ビューでの表示形式に合わせる）
         $today = Carbon::today()->format('Y年m月d日');
@@ -75,7 +75,7 @@ class AttendanceListAdminTest extends TestCase
     public function test_previous_day_button_displays_previous_day_data()
     {
         // 1. 管理者ユーザーを作成
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_admin' => true])->first();
 
         // 2. 前日の日付とユーザーを準備
         $yesterday = Carbon::yesterday()->toDateString();
@@ -103,7 +103,7 @@ class AttendanceListAdminTest extends TestCase
     public function test_next_day_button_displays_next_day_data()
     {
         // 1. 管理者ユーザーを作成
-        $admin = User::factory()->create(['is_admin' => true]);
+        $admin = User::factory()->create(['is_admin' => true])->first();
 
         // 2. 翌日の日付とユーザーを準備
         $tomorrow = Carbon::tomorrow()->toDateString();
