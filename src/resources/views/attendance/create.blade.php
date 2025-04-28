@@ -15,7 +15,7 @@
 
     {{-- 日付・時刻を現在日時で表示 --}}
     <div class="date">{{ \Carbon\Carbon::now()->format('Y年n月j日(D)') }}</div>
-    <div class="time">{{ \Carbon\Carbon::now()->format('H:i') }}</div>
+    <div class="time" id="current-time">{{ \Carbon\Carbon::now()->format('H:i:s') }}</div>
 
     {{-- 勤怠打刻フォーム --}}
     <form action="{{ route('attendance.store') }}" method="POST">
@@ -47,4 +47,24 @@
         @endif
     </form>
 </div>
+@endsection
+
+@section('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const currentTime = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('current-time').textContent = currentTime;
+        }
+
+        // 初回実行
+        updateTime();
+        // 1秒ごとに更新
+        setInterval(updateTime, 1000);
+    });
+</script>
 @endsection

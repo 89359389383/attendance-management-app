@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Attendance;
@@ -14,15 +13,15 @@ class AttendanceEditUserTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * ✅ 1. 出勤時間が退勤時間より後なら、バリデーションエラーが表示される
+     * ✅ 出勤時間が退勤時間より後の場合にバリデーションエラーを確認
      */
     public function test_validation_error_when_clock_in_is_after_clock_out()
     {
-        // 1. ユーザー作成とログイン
-        $user = User::factory()->create();
+        // 1. ユーザーを作成
+        $user = User::factory()->create(); // 【修正】first()を削除
         $this->actingAs($user);
 
-        // 2. 勤怠情報作成
+        // 2. 勤怠情報を作成
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'clock_in' => '08:00',
@@ -30,7 +29,7 @@ class AttendanceEditUserTest extends TestCase
             'work_date' => now()->toDateString(),
         ]);
 
-        // 3. 出勤＞退勤となるような入力
+        // 3. 出勤時間が退勤時間より後の場合のフォームデータ
         $formData = [
             'clock_in' => '18:00',
             'clock_out' => '17:00',
@@ -39,28 +38,26 @@ class AttendanceEditUserTest extends TestCase
             'note' => 'メモ',
         ];
 
-        // 4. 更新リクエスト送信
+        // 4. エラーが返ることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
-
-        // 5. バリデーションエラー確認
         $response->assertSessionHasErrors([
             'clock_in' => '出勤時間もしくは退勤時間が不適切な値です。',
         ]);
     }
 
     /**
-     * ✅ 2. 休憩開始時間が退勤後なら、バリデーションエラーが表示される
+     * ✅ 休憩開始時間が退勤時間より後の場合にバリデーションエラーを確認
      */
     public function test_validation_error_when_break_start_is_after_clock_out()
     {
-        // 1. ログイン
-        $user = User::factory()->create();
+        // 1. ユーザーを作成
+        $user = User::factory()->create(); // 【修正】first()を削除
         $this->actingAs($user);
 
-        // 2. 勤怠作成
+        // 2. 勤怠情報を作成
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
-        // 3. 休憩開始が退勤後になるように設定
+        // 3. 休憩開始時間が退勤時間より後の場合のフォームデータ
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -69,26 +66,24 @@ class AttendanceEditUserTest extends TestCase
             'note' => 'メモ',
         ];
 
-        // 4. 更新リクエスト
+        // 4. エラーが返ることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
-
-        // 5. エラー確認
         $response->assertSessionHasErrors(['break_start.0' => '休憩時間が勤務時間外です。']);
     }
 
     /**
-     * ✅ 3. 休憩終了時間が退勤後なら、バリデーションエラーが表示される
+     * ✅ 休憩終了時間が退勤時間より後の場合にバリデーションエラーを確認
      */
     public function test_validation_error_when_break_end_is_after_clock_out()
     {
-        // 1. ログイン
-        $user = User::factory()->create();
+        // 1. ユーザーを作成
+        $user = User::factory()->create(); // 【修正】first()を削除
         $this->actingAs($user);
 
-        // 2. 勤怠作成
+        // 2. 勤怠情報を作成
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
-        // 3. 休憩終了が退勤後
+        // 3. 休憩終了時間が退勤時間より後の場合のフォームデータ
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -97,26 +92,24 @@ class AttendanceEditUserTest extends TestCase
             'note' => 'メモ',
         ];
 
-        // 4. 更新リクエスト
+        // 4. エラーが返ることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
-
-        // 5. エラー確認
         $response->assertSessionHasErrors(['break_end.0' => '休憩時間が勤務時間外です。']);
     }
 
     /**
-     * ✅ 4. 備考が未入力の場合、バリデーションエラーが表示される
+     * ✅ 備考欄が空白の場合にバリデーションエラーを確認
      */
     public function test_validation_error_when_note_is_missing()
     {
-        // 1. ログイン
-        $user = User::factory()->create();
+        // 1. ユーザーを作成
+        $user = User::factory()->create(); // 【修正】first()を削除
         $this->actingAs($user);
 
-        // 2. 勤怠作成
+        // 2. 勤怠情報を作成
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
-        // 3. 備考だけ未入力にする
+        // 3. 備考欄が空の場合のフォームデータ
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -125,26 +118,24 @@ class AttendanceEditUserTest extends TestCase
             'note' => '',
         ];
 
-        // 4. 更新リクエスト
+        // 4. エラーが返ることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
-
-        // 5. エラー確認
         $response->assertSessionHasErrors(['note' => '備考を記入してください。']);
     }
 
     /**
-     * ✅ 5. 修正申請処理が実行される（申請登録 + 管理者画面で確認できる）
+     * ✅ 勤怠情報の修正後、申請レコードが作成されることを確認
      */
     public function test_successful_edit_creates_attendance_request_record()
     {
-        // 1. 一般ユーザーを作成・ログイン
-        $user = User::factory()->create(['is_admin' => false]);
+        // 1. ユーザーを作成（管理者でないユーザー）
+        $user = User::factory()->create(['is_admin' => false]); // 【修正】first()削除
         $this->actingAs($user);
 
-        // 2. 勤怠データ作成
+        // 2. 勤怠情報を作成
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
-        // 3. フォームデータ（有効な修正内容）
+        // 3. フォームデータを準備
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -153,13 +144,11 @@ class AttendanceEditUserTest extends TestCase
             'note' => '修正メモ',
         ];
 
-        // 4. 一般ユーザーが修正申請
+        // 4. 修正後にリダイレクトされることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
-
-        // 5. リダイレクトを確認
         $response->assertRedirect(route('attendance.list'));
 
-        // 6. DBに修正申請が登録されていることを確認
+        // 5. 申請レコードが作成されていることを確認
         $this->assertDatabaseHas('attendance_requests', [
             'attendance_id' => $attendance->id,
             'user_id' => $user->id,
@@ -167,20 +156,18 @@ class AttendanceEditUserTest extends TestCase
             'status' => '承認待ち',
         ]);
 
-        // 7. 管理者ユーザーを作成しログインしなおす
-        $admin = User::factory()->create(['is_admin' => true]);
-        $this->actingAs($admin);
+        // 6. 管理者としてログインし、申請一覧を確認
+        $admin = User::factory()->create(['is_admin' => true]); // 【修正】first()削除
+        $this->actingAs($admin, 'admin'); // 【修正】adminガードを指定
 
-        // 8. 承認一覧ページにアクセスして「承認待ち」のリストが表示されることを確認
         $response = $this->get(route('admin.request.list'));
         $response->assertStatus(200);
         $response->assertSee('承認待ち');
         $response->assertSee($user->name);
         $response->assertSee('修正メモ');
 
-        // 9. 承認詳細画面にアクセスし、修正内容が正しく表示されていることを確認
+        // 7. 詳細画面に遷移し、正しい情報が表示されていることを確認
         $requestId = \App\Models\AttendanceRequest::where('attendance_id', $attendance->id)->first()->id;
-
         $response = $this->get(route('admin.request.show', ['id' => $requestId]));
         $response->assertStatus(200);
         $response->assertSee('修正申請詳細');
@@ -192,19 +179,18 @@ class AttendanceEditUserTest extends TestCase
     }
 
     /**
-     * ✅ 6. 「承認待ち」にログインユーザーが行った申請が全て表示されていること
+     * ✅ ユーザーが自分の承認待ち申請をすべて確認できることを確認
      */
     public function test_user_can_see_all_their_pending_requests()
     {
-        // 1. 一般ユーザーでログイン
-        $user = User::factory()->create(['is_admin' => false]);
+        // 1. ユーザーを作成（管理者でないユーザー）
+        $user = User::factory()->create(['is_admin' => false]); // 【修正】first()削除
         $this->actingAs($user);
 
-        // 2. 勤怠を2件作成
+        // 2. 2つの勤怠情報を作成し、申請を行う
         $attendance1 = Attendance::factory()->create(['user_id' => $user->id]);
         $attendance2 = Attendance::factory()->create(['user_id' => $user->id]);
 
-        // 3. 修正申請を2件作成
         foreach ([$attendance1, $attendance2] as $attendance) {
             $this->put(route('attendance.update', $attendance->id), [
                 'clock_in' => '09:00',
@@ -215,15 +201,13 @@ class AttendanceEditUserTest extends TestCase
             ]);
         }
 
-        // 4. 一般ユーザーの申請一覧ページを確認
+        // 3. ユーザーが自分の申請一覧を確認できることを確認
         $response = $this->get(route('request.list'));
         $response->assertStatus(200);
         $response->assertSee('承認待ち');
+        $response->assertSee('申請テスト');
 
-        // 申請が2件あることを確認
-        $response->assertSee('申請テスト'); // 申請テストが表示されることを確認
-
-        // 追加の申請を作成
+        // 4. 新たに申請を追加し、その内容も確認できることを確認
         $attendance3 = Attendance::factory()->create(['user_id' => $user->id]);
         $this->put(route('attendance.update', $attendance3->id), [
             'clock_in' => '10:00',
@@ -233,21 +217,19 @@ class AttendanceEditUserTest extends TestCase
             'note' => '追加申請テスト',
         ]);
 
-        // 追加の申請が表示されることを確認
         $response = $this->get(route('request.list'));
-        $response->assertSee('追加申請テスト'); // 追加申請が表示されることを確認
+        $response->assertSee('追加申請テスト');
     }
 
     /**
-     * ✅ 7. 「承認済み」に管理者が承認した修正申請が全て表示されている
+     * ✅ 承認された申請がユーザーに表示されることを確認
      */
     public function test_approved_requests_are_visible_to_user()
     {
-        // 1. 一般ユーザーと管理者作成
-        $user = User::factory()->create(['is_admin' => false]);
-        $admin = User::factory()->create(['is_admin' => true]);
+        // 1. ユーザーと管理者を作成
+        $user = User::factory()->create(['is_admin' => false]); // 【修正】first()削除
+        $admin = User::factory()->create(['is_admin' => true]); // 【修正】first()削除
 
-        // 2. ログインして勤怠データ作成＆申請
         $this->actingAs($user);
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
         $this->put(route('attendance.update', $attendance->id), [
@@ -258,12 +240,12 @@ class AttendanceEditUserTest extends TestCase
             'note' => '承認対象メモ',
         ]);
 
-        // 3. 管理者が承認処理を行う
+        // 2. 申請IDを取得し、管理者として承認
         $requestId = \App\Models\AttendanceRequest::where('user_id', $user->id)->first()->id;
-        $this->actingAs($admin);
+        $this->actingAs($admin, 'admin'); // 【修正】adminガードを指定
         $this->post(route('admin.request.approve', ['id' => $requestId]));
 
-        // 4. 一般ユーザーが申請一覧を確認し、「承認済み」が表示されることを確認
+        // 3. ユーザーとして再度ログインし、申請のステータスが承認済みであることを確認
         $this->actingAs($user);
         $response = $this->get(route('request.list'));
         $response->assertStatus(200);
@@ -272,15 +254,14 @@ class AttendanceEditUserTest extends TestCase
     }
 
     /**
-     * ✅ 8. 各申請の「詳細」を押下すると申請詳細画面に遷移する
+     * ✅ 詳細ボタンをクリックして詳細画面に遷移できることを確認
      */
     public function test_clicking_detail_button_navigates_to_detail_screen()
     {
-        // 1. 一般ユーザーと管理者作成
-        $user = User::factory()->create(['is_admin' => false]);
-        $admin = User::factory()->create(['is_admin' => true]);
+        // 1. ユーザーと管理者を作成
+        $user = User::factory()->create(['is_admin' => false]); // 【修正】first()削除
+        $admin = User::factory()->create(['is_admin' => true]); // 【修正】first()削除
 
-        // 2. ログイン → 勤怠作成 → 修正申請
         $this->actingAs($user);
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
         $this->put(route('attendance.update', $attendance->id), [
@@ -291,12 +272,12 @@ class AttendanceEditUserTest extends TestCase
             'note' => '詳細表示用',
         ]);
 
-        // 3. 管理者ログイン → 詳細ページへアクセス
+        // 2. 管理者として詳細画面にアクセス
         $requestId = \App\Models\AttendanceRequest::where('user_id', $user->id)->first()->id;
-        $this->actingAs($admin);
+        $this->actingAs($admin, 'admin'); // 【修正】adminガードを指定
         $response = $this->get(route('admin.request.show', ['id' => $requestId]));
 
-        // 4. ステータス200、内容表示確認
+        // 3. 詳細画面に正しい情報が表示されていることを確認
         $response->assertStatus(200);
         $response->assertSee('修正申請詳細');
         $response->assertSee('詳細表示用');

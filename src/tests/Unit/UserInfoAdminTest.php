@@ -25,7 +25,7 @@ class UserInfoAdminTest extends TestCase
         $user2 = User::factory()->create(['name' => '一般ユーザー2', 'email' => 'user2@example.com']);
 
         // 3. 管理者としてログインしスタッフ一覧ページにアクセス
-        $response = $this->actingAs($admin)->get(route('admin.staff.list'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.staff.list'));
 
         // 4. 各ユーザーの氏名とメールアドレスが表示されていることを確認
         $response->assertStatus(200);
@@ -54,7 +54,7 @@ class UserInfoAdminTest extends TestCase
         ]);
 
         // 3. 管理者として対象ユーザーの月次勤怠一覧ページにアクセス
-        $response = $this->actingAs($admin)->get(route('admin.attendance.staff', ['id' => $user->id]));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.staff', ['id' => $user->id]));
 
         // 4. 勤怠ユーザーの名前と出勤・退勤時間が含まれていることを確認
         $response->assertStatus(200);
@@ -83,7 +83,7 @@ class UserInfoAdminTest extends TestCase
         ]);
 
         // 3. 管理者が前月の勤怠データを閲覧
-        $response = $this->actingAs($admin)->get(route('admin.attendance.staff', [
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.staff', [
             'id' => $user->id,
             'month' => $lastMonth,
         ]));
@@ -115,7 +115,7 @@ class UserInfoAdminTest extends TestCase
         ]);
 
         // 3. 管理者が翌月の勤怠データを閲覧
-        $response = $this->actingAs($admin)->get(route('admin.attendance.staff', [
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.staff', [
             'id' => $user->id,
             'month' => $nextMonth,
         ]));
@@ -146,7 +146,7 @@ class UserInfoAdminTest extends TestCase
         ]);
 
         // 3. 詳細リンクにアクセス
-        $response = $this->actingAs($admin)->get(route('admin.attendance.detail', ['id' => $attendance->id]));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.detail', ['id' => $attendance->id]));
 
         // 4. 勤怠詳細画面が正常に表示されていることを確認
         $response->assertStatus(200);

@@ -42,7 +42,7 @@ class AttendanceListAdminTest extends TestCase
         ]);
 
         // 3. 管理者としてログインし、勤怠一覧ページを開く
-        $response = $this->actingAs($admin)->get(route('admin.attendance.list'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.list'));
 
         // 4. 画面上に2名のユーザーの名前が含まれていることを確認
         $response->assertStatus(200);
@@ -62,7 +62,7 @@ class AttendanceListAdminTest extends TestCase
         $today = Carbon::today()->format('Y年m月d日');
 
         // 3. 管理者としてアクセス
-        $response = $this->actingAs($admin)->get(route('admin.attendance.list'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.list'));
 
         // 4. 日付が画面上に正しく表示されていることを確認
         $response->assertStatus(200);
@@ -89,7 +89,7 @@ class AttendanceListAdminTest extends TestCase
         ]);
 
         // 3. 前日データ付きでアクセス
-        $response = $this->actingAs($admin)->get(route('admin.attendance.list', ['date' => $yesterday]));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.list', ['date' => $yesterday]));
 
         // 4. 正しい勤怠情報が表示されているか確認
         $response->assertStatus(200);
@@ -117,7 +117,7 @@ class AttendanceListAdminTest extends TestCase
         ]);
 
         // 3. 翌日データ付きでアクセス
-        $response = $this->actingAs($admin)->get(route('admin.attendance.list', ['date' => $tomorrow]));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.list', ['date' => $tomorrow]));
 
         // 4. 翌日の日付とユーザー名が表示されていることを確認
         $response->assertStatus(200);

@@ -33,7 +33,7 @@ class AttendanceEditAdminTest extends TestCase
         }
 
         // 3. 管理者としてログインし、修正申請一覧ページを開く
-        $response = $this->actingAs($admin)->get(route('admin.request.list'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.request.list'));
 
         // 4. HTML全体から空白や改行を削除
         $html = preg_replace('/\s+/', '', $response->getContent());
@@ -60,7 +60,7 @@ class AttendanceEditAdminTest extends TestCase
         ]);
 
         // 3. 管理者としてログインし、修正申請一覧ページを開く
-        $response = $this->actingAs($admin)->get(route('admin.request.list'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.request.list'));
 
         // 4. HTML全体から空白や改行を削除
         $html = preg_replace('/\s+/', '', $response->getContent());
@@ -88,7 +88,7 @@ class AttendanceEditAdminTest extends TestCase
         ]);
 
         // 3. 管理者としてログインし、修正申請詳細ページを開く
-        $response = $this->actingAs($admin)->get(route('admin.request.show', $request->id));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.request.show', $request->id));
 
         // 4. レスポンスが正常であることを確認
         $response->assertStatus(200);
@@ -122,7 +122,7 @@ class AttendanceEditAdminTest extends TestCase
         ]);
 
         // 3. 管理者としてログインし、承認ボタンを押す
-        $response = $this->actingAs($admin)->post(route('admin.request.approve', $attendanceRequest->id));
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.request.approve', $attendanceRequest->id));
 
         // 4. 承認後にリダイレクトされることを確認
         $response->assertRedirect(route('admin.request.list'));

@@ -73,7 +73,7 @@ class EndWorkTest extends TestCase
         ]);
 
         // 5. 管理者として勤怠一覧画面にアクセス
-        $response = $this->actingAs($admin)->get(route('admin.attendance.list'));
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.list'));
 
         // 6. レスポンスステータスとHTMLを取得
         $response->assertStatus(200);
