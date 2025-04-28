@@ -27,6 +27,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 // ログアウト
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// 管理者ログアウト
+Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+
 // =====================
 // 認証が必要な一般ユーザー機能
 // =====================
