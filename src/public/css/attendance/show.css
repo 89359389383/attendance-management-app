@@ -73,12 +73,24 @@ h1::before {
     border-bottom: 2px solid #eee;
 }
 
+.user-name {
+    margin-left: 34px;
+}
+
+.year {
+    margin-left: 34px;
+}
+
+.month-day {
+    margin-left: 140px;
+}
+
 input[type="time"] {
     color: #333;
     font-size: 14px;
     font-weight: bold;
     letter-spacing: 2px;
-    padding: 2px 20px;
+    padding: 2px 0px 2px 24px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 130px;
@@ -193,15 +205,20 @@ textarea {
         font-size: 14px;
     }
 
+        .month-day {
+            margin-left: 110px;
+        }
+
     input[type="time"] {
         /* 時刻入力フィールドも小さめに */
         font-size: 14px;
-        width: 110px;
+        width: 130px;
     }
 
     textarea {
         /* テキストエリアも少し小さめ */
         font-size: 14px;
+        margin-left: 6px;
         height: 70px;
     }
 
@@ -212,7 +229,7 @@ textarea {
 
     .remarks-content {
         /* 備考欄の横幅を狭める */
-        width: 320px;
+        width: 348px;
         padding: 8px 15px;
     }
 
@@ -271,6 +288,24 @@ textarea {
         font-weight: normal;
     }
 
+        .year {
+            /* 年部分 */
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    
+        .month-day {
+            /* 月日部分 */
+            margin-left: 75px;
+            font-weight: bold;
+        }
+    
+        .user-name {
+            /* 名前部分 */
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
     .time-range {
         /* 休憩などの時間範囲も詰める */
         gap: 15px;
@@ -285,7 +320,7 @@ textarea {
 
     textarea {
         /* テキストエリアも縮小 */
-        width: 100%;
+        width: 250px;
         height: 60px;
         font-size: 12px;
     }
