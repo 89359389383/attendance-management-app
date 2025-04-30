@@ -205,9 +205,9 @@ textarea {
         font-size: 14px;
     }
 
-        .month-day {
-            margin-left: 110px;
-        }
+    .month-day {
+        margin-left: 110px;
+    }
 
     input[type="time"] {
         /* 時刻入力フィールドも小さめに */
@@ -288,23 +288,23 @@ textarea {
         font-weight: normal;
     }
 
-        .year {
-            /* 年部分 */
-            margin-left: 10px;
-            font-weight: bold;
-        }
-    
-        .month-day {
-            /* 月日部分 */
-            margin-left: 75px;
-            font-weight: bold;
-        }
-    
-        .user-name {
-            /* 名前部分 */
-            margin-left: 10px;
-            font-weight: bold;
-        }
+    .year {
+        /* 年部分 */
+        margin-left: 10px;
+        font-weight: bold;
+    }
+
+    .month-day {
+        /* 月日部分 */
+        margin-left: 75px;
+        font-weight: bold;
+    }
+
+    .user-name {
+        /* 名前部分 */
+        margin-left: 10px;
+        font-weight: bold;
+    }
 
     .time-range {
         /* 休憩などの時間範囲も詰める */

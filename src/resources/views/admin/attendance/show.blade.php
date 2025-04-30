@@ -32,12 +32,20 @@
     <div class="card">
         <div class="row">
             <div class="label">名前</div>
-            <div class="content">{{ $attendance->user->name }}</div>
+            <div class="content name-content">
+                <span class="user-name">{{ $attendance->user->name }}</span>
+            </div>
         </div>
 
         <div class="row">
             <div class="label">日付</div>
-            <div class="content">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</div>
+            @php
+            $date = \Carbon\Carbon::parse($attendance->work_date);
+            @endphp
+            <div class="content date-content">
+                <span class="year">{{ $date->year }}年</span>
+                <span class="month-day">{{ $date->format('n月j日') }}</span>
+            </div>
         </div>
 
         <div class="row">
@@ -80,12 +88,20 @@
         <div class="card">
             <div class="row">
                 <div class="label">名前</div>
-                <div class="content">{{ $attendance->user->name }}</div>
+                <div class="content name-content">
+                    <span class="user-name">{{ $attendance->user->name }}</span>
+                </div>
             </div>
 
             <div class="row">
                 <div class="label">日付</div>
-                <div class="content">{{ \Carbon\Carbon::parse($attendance->work_date)->format('Y年n月j日') }}</div>
+                @php
+                $date = \Carbon\Carbon::parse($attendance->work_date);
+                @endphp
+                <div class="content date-content">
+                    <span class="year">{{ $date->year }}年</span>
+                    <span class="month-day">{{ $date->format('n月j日') }}</span>
+                </div>
             </div>
 
             <div class="row">

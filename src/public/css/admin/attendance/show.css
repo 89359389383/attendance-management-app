@@ -67,6 +67,18 @@ body {
     border-bottom: 2px solid #eee;
 }
 
+.user-name {
+    margin-left: 28px;
+}
+
+.year {
+    margin-left: 28px;
+}
+
+.month-day {
+    margin-left: 145px;
+}
+
 input[type="time"] {
     color: #333;
     font-size: 14px;
@@ -193,6 +205,19 @@ textarea {
         font-size: 14px;
     }
 
+    .user-name {
+        margin-left: 24px;
+    }
+
+    .year {
+        margin-left: 24px;
+    }
+
+
+    .month-day {
+        margin-left: 110px;
+    }
+
     input[type="time"] {
         /* 時刻入力フィールドを少し小さめに */
         font-size: 14px;
@@ -214,6 +239,7 @@ textarea {
         /* 備考欄も少し狭めにする */
         width: 350px;
         padding: 8px 15px;
+        margin-left: 6px;
     }
 
     .approve-button {
@@ -251,24 +277,33 @@ textarea {
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    .label,
-    .content {
-        /* ラベルとコンテンツを縦並びにしてスペース節約 */
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-        border-bottom: 1px solid #eee;
-    }
-
     .label {
-        /* ラベルは太字でやや目立たせる */
+        /* ラベルだけ少し目立つように太字感キープ */
         font-weight: bold;
         color: #666;
     }
 
     .content {
-        /* コンテンツも同じ幅に揃える */
+        /* コンテンツもラベルと同じ幅にする */
         font-weight: normal;
+    }
+
+    .year {
+        /* 年部分 */
+        margin-left: 14px;
+        font-weight: bold;
+    }
+
+    .month-day {
+        /* 月日部分 */
+        margin-left: 78px;
+        font-weight: bold;
+    }
+
+    .user-name {
+        /* 名前部分 */
+        margin-left: 14px;
+        font-weight: bold;
     }
 
     .time-range {
@@ -285,9 +320,10 @@ textarea {
 
     textarea {
         /* テキストエリアもコンパクトに */
-        width: 100%;
+        width: 250px;
         height: 60px;
         font-size: 12px;
+        margin-left: 48px;
     }
 
     .remarks-content {
