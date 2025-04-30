@@ -28,15 +28,23 @@
 
         <div class="row">
             <div class="label">日付</div>
-            <div class="content">{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y年n月j日') }}</div>
+            @php
+            $date = \Carbon\Carbon::parse($request->work_date);
+            @endphp
+            <div class="content date-content">
+                <span class="year">{{ $date->year }}年</span>
+                <span class="month-day">{{ $date->format('n月j日') }}</span>
+            </div>
         </div>
 
         <div class="row">
             <div class="label">出勤・退勤</div>
             <div class="content">
-                {{ \Carbon\Carbon::parse($request->clock_in)->format('H:i') }}
-                <span class="time-separator">～</span>
-                {{ \Carbon\Carbon::parse($request->clock_out)->format('H:i') }}
+                <div class="time-range">
+                    <span class="clock-in">{{ \Carbon\Carbon::parse($request->clock_in)->format('H:i') }}</span>
+                    <span class="time-separator">～</span>
+                    <span class="clock-out">{{ \Carbon\Carbon::parse($request->clock_out)->format('H:i') }}</span>
+                </div>
             </div>
         </div>
 
@@ -45,9 +53,9 @@
         <div class="row">
             <div class="label">休憩{{ $index + 1 }}</div>
             <div class="content">
-                {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }}
+                <span class="break-start">{{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }}</span>
                 <span class="time-separator">～</span>
-                {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}
+                <span class="break-end">{{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}</span>
             </div>
         </div>
         @endforeach
@@ -82,7 +90,7 @@
         @if($request->status === '承認待ち')
         <form method="POST" action="{{ route('admin.request.approve', $request->id) }}">
             @csrf
-            <button type="submit" class="approve-button">承認する</button>
+            <button type="submit" class="approve-button">承認</button>
         </form>
         @else
         <button class="approve-button-approved" disabled>承認済み</button>
