@@ -18,23 +18,18 @@ class AttendanceDetailUserTest extends TestCase
      */
     public function test_attendance_detail_shows_logged_in_user_name()
     {
-        // 1. ユーザーを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create(['name' => 'テスト太郎']);
-
-        // 2. 勤怠データを作成
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'work_date' => Carbon::today(),
         ]);
 
-        // 3. ログインして勤怠詳細ページにアクセス
         $response = $this->actingAs($user)->get("/attendance/{$attendance->id}");
-
-        // 4. レスポンスからHTMLを取得して整形
         $html = preg_replace('/\s+/', '', $response->getContent());
 
-        // 5. 名前が含まれているか確認
-        $this->assertStringContainsString('<divclass="content">テスト太郎</div>', $html);
+        // 修正済み：実際のHTML構造に基づいたアサート
+        $this->assertStringContainsString('<spanclass="user-name">テスト太郎</span>', $html);
     }
 
     /**
@@ -42,25 +37,22 @@ class AttendanceDetailUserTest extends TestCase
      */
     public function test_attendance_detail_shows_correct_date()
     {
-        // 1. ユーザーを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
-
-        // 2. 日付を指定して勤怠データを作成
         $date = Carbon::parse('2024-10-01');
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'work_date' => $date,
         ]);
 
-        // 3. ログインして勤怠詳細ページにアクセス
         $response = $this->actingAs($user)->get("/attendance/{$attendance->id}");
-
-        // 4. HTML整形
         $html = preg_replace('/\s+/', '', $response->getContent());
 
-        // 5. 日付（表示形式）を確認
-        $expectedDate = $date->format('Y年n月j日');
-        $this->assertStringContainsString("<divclass=\"content\">{$expectedDate}</div>", $html);
+        // 修正済み：<span class="year">2024年</span><span class="month-day">10月1日</span> に一致させる
+        $expectedYear = $date->format('Y年');
+        $expectedMonthDay = $date->format('n月j日');
+
+        $this->assertStringContainsString("<spanclass=\"year\">{$expectedYear}</span><spanclass=\"month-day\">{$expectedMonthDay}</span>", $html);
     }
 
     /**
@@ -68,7 +60,7 @@ class AttendanceDetailUserTest extends TestCase
      */
     public function test_attendance_detail_shows_correct_clock_in_and_out()
     {
-        // 1. ユーザーと勤怠データを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
@@ -76,13 +68,9 @@ class AttendanceDetailUserTest extends TestCase
             'clock_out' => '18:00:00',
         ]);
 
-        // 2. ログインして勤怠詳細ページへアクセス
         $response = $this->actingAs($user)->get("/attendance/{$attendance->id}");
-
-        // 3. HTML整形
         $html = preg_replace('/\s+/', '', $response->getContent());
 
-        // 4. 出勤と退勤時刻が含まれるか確認
         $this->assertStringContainsString('<inputtype="time"name="clock_in"value="09:00">', $html);
         $this->assertStringContainsString('<inputtype="time"name="clock_out"value="18:00">', $html);
     }
@@ -92,24 +80,19 @@ class AttendanceDetailUserTest extends TestCase
      */
     public function test_attendance_detail_shows_correct_break_times()
     {
-        // 1. ユーザーと勤怠データを作成
+        /** @var \App\Models\User $user */
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
-        // 2. 休憩時間を登録
         BreakTime::create([
             'attendance_id' => $attendance->id,
             'break_start' => '12:00:00',
             'break_end' => '13:00:00',
         ]);
 
-        // 3. ログインして勤怠詳細ページへアクセス
         $response = $this->actingAs($user)->get("/attendance/{$attendance->id}");
-
-        // 4. HTML整形
         $html = preg_replace('/\s+/', '', $response->getContent());
 
-        // 5. 休憩時間の確認
         $this->assertStringContainsString('<inputtype="time"name="break_start[]"value="12:00">', $html);
         $this->assertStringContainsString('<inputtype="time"name="break_end[]"value="13:00">', $html);
     }
