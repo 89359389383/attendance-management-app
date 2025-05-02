@@ -34,9 +34,6 @@
                 📅
                 <span id="selectedDate" class="selected-date-text">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</span>
             </div>
-
-            <!-- 表示ボタンは削除 -->
-            <!-- <button type="submit" style="margin-left: 8px;">表示</button> -->
         </form>
 
         <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d')]) }}" class="date-nav-btn">
@@ -99,7 +96,6 @@
 </div>
 @endsection
 
-<!-- JavaScript追加 -->
 <script>
     function updateDateAndSubmit(value) {
         // 選んだ日付を表示用に更新

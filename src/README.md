@@ -17,8 +17,8 @@
     ※.env ファイルの DB_DATABASE、DB_USERNAME、DB_PASSWORD の値を docker-compose.yml に記載の値に変更
 4.  php artisan key:generate
 5.  php artisan migrate
-6.  php artisan db:seed
-※ログインの際必要なデータはdatabase\seeders\DatabaseSeeder.phpに記載
+6.  php artisan db:seed<br>
+    ※ログインの際必要なデータは database\seeders\DatabaseSeeder.php に記載
 
 ## 使用技術
 

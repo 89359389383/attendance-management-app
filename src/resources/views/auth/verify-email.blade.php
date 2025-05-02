@@ -21,7 +21,7 @@
     </div>
     @endif
 
-    　　<div class="mt-3">
+    <div class="mt-3">
         <a href="http://localhost:8025" class="btn-primary">認証はこちらから</a>
     </div>
 

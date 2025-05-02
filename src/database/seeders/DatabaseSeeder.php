@@ -43,9 +43,9 @@ class DatabaseSeeder extends Seeder
         $users = User::factory(4)->create(['is_admin' => false])
             ->prepend($fixedUser);
 
-        // 【4】それぞれのユーザーに、2025年2月1日〜4月19日の平日のみ勤怠データを作成
+        // 【4】それぞれのユーザーに、2025年1月1日〜4月30日の平日のみ勤怠データを作成
         foreach ($users as $user) {
-            $period = CarbonPeriod::create('2025-02-01', '2025-04-19');
+            $period = CarbonPeriod::create('2025-01-01', '2025-04-30');
 
             foreach ($period as $date) {
                 // 土日を除く（0 = 日曜, 6 = 土曜）

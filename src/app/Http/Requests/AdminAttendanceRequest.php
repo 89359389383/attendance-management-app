@@ -6,18 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AdminAttendanceRequest extends FormRequest
 {
-    /**
-     * このリクエストが認証されているかどうかを定義します。
-     * 管理者ログイン済みであることを前提として、true を返します。
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * バリデーションルールを定義します。
-     */
     public function rules(): array
     {
         return [
@@ -34,9 +27,6 @@ class AdminAttendanceRequest extends FormRequest
         ];
     }
 
-    /**
-     * カスタムエラーメッセージを定義します。
-     */
     public function messages(): array
     {
         return [

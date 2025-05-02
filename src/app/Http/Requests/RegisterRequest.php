@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class RegisterRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * このリクエストが認可されているか確認します。
      *
      * @return bool
      */
@@ -17,7 +17,7 @@ class RegisterRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * リクエストに適用されるバリデーションルールを取得します。
      *
      * @return array
      */
@@ -26,10 +26,15 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'password' => 'required|string|min:8|max:255|confirmed', // confirmed: 確認用パスワードと一致
+            'password' => 'required|string|min:8|max:255|confirmed',
         ];
     }
 
+    /**
+     * バリデーションメッセージを取得します。
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

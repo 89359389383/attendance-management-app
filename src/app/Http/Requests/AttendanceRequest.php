@@ -6,17 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AttendanceRequest extends FormRequest
 {
-    /**
-     * このリクエストが認証されているかどうかを確認します。
-     */
     public function authorize(): bool
     {
-        return true; // ログイン済みであれば true
+        return true;
     }
 
-    /**
-     * バリデーションルールを定義します。
-     */
     public function rules(): array
     {
         return [
@@ -33,9 +27,6 @@ class AttendanceRequest extends FormRequest
         ];
     }
 
-    /**
-     * カスタムエラーメッセージを定義します。
-     */
     public function messages(): array
     {
         return [
