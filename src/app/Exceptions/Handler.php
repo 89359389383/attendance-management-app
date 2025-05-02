@@ -46,12 +46,15 @@ class Handler extends ExceptionHandler
                 'user' => $user,
                 'status_code' => $exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException ? $exception->getStatusCode() : 500,
                 'env_config' => [
-                    'APP_ENV' => env('APP_ENV'), // **エラー時のみ記録**
+                    'APP_ENV' => env('APP_ENV'),
                     'SESSION_DRIVER' => env('SESSION_DRIVER'),
                     'CACHE_DRIVER' => env('CACHE_DRIVER'),
                 ],
                 'trace' => $exception->getTraceAsString(),
             ]);
+
+            // 例外オブジェクト全体をそのままログに出力（補足ログ）
+            Log::error($exception);
         }
 
         return parent::render($request, $exception);
