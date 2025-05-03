@@ -33,6 +33,35 @@
             </div>
         </div>
 
+        <!-- 勤務集計情報 -->
+        <div class="summary-box">
+            <div class="summary-item">
+                <span class="summary-label">勤務日数：</span>
+                <span class="summary-value">{{ $attendances->whereNotNull('clock_in')->count() }} 日</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">合計勤務時間：</span>
+                <span class="summary-value">
+                    @php
+                    $totalWorkMinutes = 0;
+                    foreach ($attendances as $attendance) {
+                    if ($attendance->clock_in && $attendance->clock_out) {
+                    $breakMinutes = $attendance->breakTimes->sum(function ($break) {
+                    if ($break->break_start && $break->break_end) {
+                    return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
+                    }
+                    return 0;
+                    });
+                    $total = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes($attendance->clock_in) - $breakMinutes;
+                    $totalWorkMinutes += max(0, $total); // マイナス防止
+                    }
+                    }
+                    echo floor($totalWorkMinutes / 60) . '時間' . str_pad($totalWorkMinutes % 60, 2, '0', STR_PAD_LEFT) . '分';
+                    @endphp
+                </span>
+            </div>
+        </div>
+
         <!-- 勤怠情報テーブル -->
         <table class=" attendance-table">
             <thead>

@@ -35,7 +35,8 @@
 
     <!-- CSV出力ボタン -->
     <div class="csv-export">
-        <form method="GET" action="{{ route('admin.attendance.staff.export', ['id' => $user->id, 'month' => $yearMonth]) }}">
+        <form method="GET" action="{{ route('admin.attendance.staff.export', ['id' => $user->id]) }}">
+            <input type="hidden" name="month" value="{{ $yearMonth }}">
             <button type="submit" class="btn btn-primary">CSV出力</button>
         </form>
     </div>

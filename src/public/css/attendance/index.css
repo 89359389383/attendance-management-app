@@ -113,6 +113,36 @@ header {
     margin-right: 10px;
 }
 
+/* 勤務集計情報のボックス */
+.summary-box {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+}
+
+.summary-label {
+    margin-right: 8px;
+    color: #666;
+}
+
+.summary-value {
+    font-size: 18px;
+    color: #000;
+}
+
 /* テーブル */
 .attendance-table {
     width: 100%;
@@ -165,6 +195,15 @@ header {
         padding: 40px 30px;
     }
 
+    .summary-box {
+        padding: 25px 40px;
+        font-size: 17px;
+    }
+
+    .summary-value {
+        font-size: 20px;
+    }
+
     .attendance-table th,
     .attendance-table td {
         /* テーブルのセルも少し広げて窮屈さを防ぐ */
@@ -204,6 +243,18 @@ header {
 
     .month-display {
         /* 月表示のアイコンとテキストをやや小さく */
+        font-size: 16px;
+    }
+
+    .summary-box {
+        padding: 15px 20px;
+    }
+
+    .summary-item {
+        font-size: 14px;
+    }
+
+    .summary-value {
         font-size: 16px;
     }
 

@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdminAttendanceRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -119,51 +120,75 @@ class AttendanceController extends Controller
      * URL: /admin/attendance/staff/{id}/export
      * メソッド: GET
      */
+
     public function exportMonthlyCsv($id, Request $request)
     {
         $user = User::findOrFail($id);
         $yearMonth = $request->input('month', Carbon::now()->format('Y-m'));
+
+        Log::info("CSV出力開始：user_id={$id}, month={$yearMonth}");
 
         $attendances = Attendance::where('user_id', $id)
             ->where('work_date', 'like', "$yearMonth%")
             ->with('breakTimes')
             ->get();
 
+        Log::info("取得した勤怠データ数：" . $attendances->count());
+
         $csvHeader = ['日付', '出勤', '退勤', '休憩時間', '合計労働時間'];
         $csvData = [];
 
+        $totalWorkMinutes = 0;
+        $totalWorkDays = 0;
+
         foreach ($attendances as $attendance) {
-            $clockIn = optional($attendance->clock_in)->format('H:i');
-            $clockOut = optional($attendance->clock_out)->format('H:i');
+            $clockIn = $attendance->clock_in ? Carbon::parse($attendance->clock_in) : null;
+            $clockOut = $attendance->clock_out ? Carbon::parse($attendance->clock_out) : null;
 
             $totalBreak = $attendance->breakTimes->sum(function ($break) {
                 return $break->break_start && $break->break_end
-                    ? \Carbon\Carbon::parse($break->break_end)->diffInMinutes(\Carbon\Carbon::parse($break->break_start))
+                    ? Carbon::parse($break->break_end)->diffInMinutes(Carbon::parse($break->break_start))
                     : 0;
             });
 
             $breakFormatted = sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60);
 
             $workTotal = '';
-            if ($attendance->clock_in && $attendance->clock_out) {
-                $diff = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_in)) - $totalBreak;
+            if ($clockIn && $clockOut) {
+                $diff = $clockOut->diffInMinutes($clockIn) - $totalBreak;
+                $totalWorkMinutes += max(0, $diff);
                 $workTotal = sprintf('%d:%02d', floor($diff / 60), $diff % 60);
+                $totalWorkDays++;
             }
 
+            Log::info("勤怠データ：", [
+                'date' => $attendance->work_date,
+                'clock_in' => $clockIn ? $clockIn->format('H:i') : null,
+                'clock_out' => $clockOut ? $clockOut->format('H:i') : null,
+                'break' => $breakFormatted,
+                'work_total' => $workTotal,
+            ]);
+
             $csvData[] = [
-                \Carbon\Carbon::parse($attendance->work_date)->format('Y/m/d(D)'),
-                $clockIn,
-                $clockOut,
+                Carbon::parse($attendance->work_date)->format('Y/m/d(D)'),
+                $clockIn ? $clockIn->format('H:i') : '',
+                $clockOut ? $clockOut->format('H:i') : '',
                 $breakFormatted,
                 $workTotal,
             ];
         }
 
+        $csvData[] = [];
+        $csvData[] = ['勤務日数', $totalWorkDays . '日'];
+        $csvData[] = ['合計勤務時間', sprintf('%d時間%02d分', floor($totalWorkMinutes / 60), $totalWorkMinutes % 60)];
+
+        Log::info("集計結果：勤務日数={$totalWorkDays}、合計勤務時間={$totalWorkMinutes}分");
+
         $fileName = $user->name . '_月次勤怠_' . $yearMonth . '.csv';
+        Log::info("CSVファイル名：{$fileName}");
 
         return response()->streamDownload(function () use ($csvHeader, $csvData) {
             $stream = fopen('php://output', 'w');
-            // Excel対応のBOM付き（文字化け防止）
             fprintf($stream, chr(0xEF) . chr(0xBB) . chr(0xBF));
             fputcsv($stream, $csvHeader);
             foreach ($csvData as $row) {
