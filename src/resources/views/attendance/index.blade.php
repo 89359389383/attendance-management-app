@@ -20,7 +20,7 @@
                     <span class="arrow">←</span> 前月
                 </a>
             </div>
-            <div class="month-display">
+            <div class="month-display" onclick="toggleMonthModal()" style="cursor:pointer;">
                 <span class="calendar-icon">📅</span>
                 <!-- 現在の月 -->
                 <span>{{ $currentMonth->format('Y年m月') }}</span>
@@ -31,6 +31,22 @@
                     翌月 <span class="arrow">→</span>
                 </a>
             </div>
+        </div>
+
+        <!-- 月選択モーダル -->
+        <div id="monthModal" style="display:none; position:absolute; background:#fff; border:1px solid #ccc; padding:10px; z-index:999;">
+            @php
+            // 現在表示している月を基準に次の半年と前の半年の合計13ヶ月を計算
+            $now = \Carbon\Carbon::now();
+            $startMonth = $currentMonth->copy()->subMonths(6); // 6ヶ月前
+            $endMonth = $currentMonth->copy()->addMonths(6); // 6ヶ月後
+
+            // 13ヶ月分を表示するためのリンク
+            for ($i = 0; $i < 13; $i++) {
+                $month=$startMonth->copy()->addMonths($i); // 開始月から順番に1ヶ月ずつ進めていく
+                echo '<a href="' . route('attendance.list', ['month' => $month->format('Y-m')]) . '" style="display:block; text-align:center; margin:5px 0;">' . $month->format('Y年m月') . '</a>';
+                }
+                @endphp
         </div>
 
         <!-- 勤務集計情報 -->
@@ -63,7 +79,7 @@
         </div>
 
         <!-- 勤怠情報テーブル -->
-        <table class=" attendance-table">
+        <table class="attendance-table">
             <thead>
                 <tr>
                     <th class="date-header">日付</th>
@@ -134,4 +150,12 @@
         </table>
     </div>
 </body>
+
+<script>
+    function toggleMonthModal() {
+        const modal = document.getElementById('monthModal');
+        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
+
 @endsection

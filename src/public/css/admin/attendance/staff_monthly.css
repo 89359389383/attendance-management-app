@@ -250,34 +250,46 @@ nav ul li a {
     text-decoration: none;
 }
 
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        padding: 10px;
-    }
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    nav ul {
-        margin-top: 10px;
-    }
+.modal-content {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    width: 170px;
+    overflow-y: auto;
+    text-align: center;
+}
 
-    nav ul li {
-        margin-left: 10px;
-    }
+.month-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
 
-    .date-nav {
-        flex-direction: column;
-        gap: 10px;
-    }
+.month-list a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px;
+}
 
-    .attendance-table {
-        font-size: 14px;
-    }
-
-    .attendance-table th,
-    .attendance-table td {
-        padding: 10px 5px;
-    }
+.month-list a:hover {
+    text-decoration: underline;
 }
 
 /* レスポンシブ対応 */

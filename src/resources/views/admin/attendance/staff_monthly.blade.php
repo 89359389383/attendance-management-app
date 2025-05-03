@@ -13,19 +13,16 @@
     <!-- 月切り替えナビゲーション -->
     <div class="month-selector">
         <div class="month-nav">
-            <!-- 前月遷移リンク -->
             <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => \Carbon\Carbon::parse($yearMonth)->copy()->subMonth()->format('Y-m')]) }}"
                 class="month-link">
                 <span class="arrow">←</span>前月
             </a>
         </div>
         <div class="month-display">
-            <span class="calendar-icon">📅</span>
-            <!-- 表示中の月 -->
+            <span id="calendar-icon" class="calendar-icon" style="cursor: pointer;">📅</span>
             <span>{{ \Carbon\Carbon::parse($yearMonth)->format('Y年m月') }}</span>
         </div>
         <div class="month-nav">
-            <!-- 翌月遷移リンク -->
             <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => \Carbon\Carbon::parse($yearMonth)->copy()->addMonth()->format('Y-m')]) }}"
                 class="month-link">
                 翌月<span class="arrow">→</span>
@@ -98,4 +95,49 @@
         </tbody>
     </table>
 </div>
+
+<!-- 月選択モーダル -->
+<div id="monthModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" style="cursor: pointer;">×</span>
+        <ul class="month-list">
+            @php
+            $base = \Carbon\Carbon::parse($yearMonth)->startOfMonth(); // ← 表示中の月を基準に修正
+            @endphp
+            @for ($i = -6; $i <= 6; $i++)
+                @php
+                $targetMonth=$base->copy()->addMonths($i);
+                $ym = $targetMonth->format('Y-m');
+                @endphp
+                <li>
+                    <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => $ym]) }}">
+                        {{ $targetMonth->format('Y年m月') }}
+                    </a>
+                </li>
+                @endfor
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const icon = document.getElementById('calendar-icon');
+        const modal = document.getElementById('monthModal');
+        const closeBtn = modal.querySelector('.close');
+
+        icon.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
 @endsection
