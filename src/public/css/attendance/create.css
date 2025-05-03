@@ -45,6 +45,8 @@ body {
 .button {
     background-color: #000000;
     color: #ffffff;
+    display: block;
+    margin: 0 auto;
     border: none;
     border-radius: 14px;
     padding: 10px 60px;
@@ -90,9 +92,29 @@ body {
     opacity: 0.8;
 }
 
+.button-clock-out {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 10px 60px;
+    letter-spacing: 2px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
 /* ボタンアクティブ時の設定 */
 .button:active {
     background-color: #eaeaea;
+}
+
+.alert-message {
+    font-size: 22px;
+    margin-top: 35px;
+    color: #ff0000;
+    font-weight: bold;
 }
 
 /* 退勤メッセージ */
@@ -153,6 +175,13 @@ body {
         font-size: 20px;
         padding: 10px 50px;
     }
+
+    .alert-message {
+        font-size: 18px;
+        margin-top: 35px;
+        color: #ff0000;
+        font-weight: bold;
+    }
 }
 
 /* ===========================================================
@@ -189,8 +218,13 @@ body {
         /* ボタンも小さく調整、横幅を広げすぎない */
         font-size: 18px;
         padding: 10px 30px;
-        margin-left: 10px;
-        /* 左マージンも縮小 */
+    }
+
+    .alert-message {
+        font-size: 16px;
+        margin-top: 35px;
+        color: #ff0000;
+        font-weight: bold;
     }
 
     .message {

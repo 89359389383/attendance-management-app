@@ -31,11 +31,16 @@
         {{-- 出勤ボタン：ステータスが勤務外かつ clock_in がまだ未入力のときのみ表示 --}}
         @if(($attendance->status ?? '勤務外') === '勤務外' && empty($attendance->clock_in))
         <button type="submit" name="action" value="clock_in" class="button">出勤</button>
+
+        {{-- ★【追加】打刻忘れ防止メッセージ --}}
+        <div class="alert-message">
+            本日まだ出勤打刻がされていません。<br>忘れずに打刻してください。
+        </div>
         @endif
 
         {{-- 退勤：ステータスが出勤中かつ clock_out がまだ未入力のときのみ表示 --}}
         @if(($attendance->status ?? '') === '出勤中' && empty($attendance->clock_out))
-        <button type="submit" name="action" value="clock_out" class="button">退勤</button>
+        <button type="submit" name="action" value="clock_out" class="button-clock-out">退勤</button>
         @endif
 
         {{-- 休憩開始：ステータスが出勤中なら常に表示（何回でもOK） --}}
