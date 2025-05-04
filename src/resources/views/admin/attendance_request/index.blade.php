@@ -24,12 +24,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th>選択</th>
+                        {{-- 一括承認ボタン --}}
+                        <div>
+                            <button type="submit" class="btn-success">選択した申請を一括承認する</button>
+                        </div>
+                        <th><input type="checkbox" id="select-all"></th> {{-- 全選択用チェックボックス --}}
                         <th>状態</th>
-                        <th>名前</th>
-                        <th>対象日時</th>
+                        <th>{!! sortLink('名前', 'name', request('sort'), request('direction'), 'pending') !!}</th>
+                        <th>{!! sortLink('対象日時', 'work_date', request('sort'), request('direction'), 'pending') !!}</th>
                         <th>申請理由</th>
-                        <th>申請日時</th>
+                        <th>{!! sortLink('申請日時', 'request_date', request('sort'), request('direction'), 'pending') !!}</th>
                         <th>詳細</th>
                     </tr>
                 </thead>
@@ -54,11 +58,6 @@
                     @endforelse
                 </tbody>
             </table>
-
-            {{-- 一括承認ボタン --}}
-            <div style="margin-top: 10px;">
-                <button type="submit" class="btn btn-primary">選択した申請を一括承認する</button>
-            </div>
         </form>
     </div>
 
@@ -68,10 +67,10 @@
             <thead>
                 <tr>
                     <th>状態</th>
-                    <th>名前</th>
-                    <th>対象日</th>
+                    <th>{!! sortLink('名前', 'name', request('sort'), request('direction'), 'approved') !!}</th>
+                    <th>{!! sortLink('対象日', 'work_date', request('sort'), request('direction'), 'approved') !!}</th>
                     <th>申請理由</th>
-                    <th>申請日</th>
+                    <th>{!! sortLink('申請日時', 'request_date', request('sort'), request('direction'), 'approved') !!}</th>
                     <th>詳細</th>
                 </tr>
             </thead>
@@ -100,11 +99,40 @@
 
 {{-- タブ切り替え用スクリプト --}}
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab') || 'pending';
+        showTab(tab);
+
+        // 全選択／全解除トグル機能
+        const selectAllCheckbox = document.getElementById('select-all');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('input[name="request_ids[]"]');
+                checkboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
+            });
+        }
+    });
+
     function showTab(tabName) {
         document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
         document.getElementById(tabName).style.display = 'block';
-        event.target.classList.add('active');
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            if (btn.textContent.includes(tabName === 'pending' ? '承認待ち' : '承認済み')) {
+                btn.classList.add('active');
+            }
+        });
     }
 </script>
+
 @endsection
+
+@php
+function sortLink($label, $field, $currentSort, $currentDirection, $tab) {
+$direction = ($currentSort === $field && $currentDirection === 'asc') ? 'desc' : 'asc';
+$arrow = $currentSort === $field ? ($currentDirection === 'asc' ? '▲' : '▼') : '';
+$params = http_build_query(['sort' => $field, 'direction' => $direction, 'tab' => $tab]);
+return "<a href=\"?" . $params . "\">{$label} {$arrow}</a>";
+}
+@endphp

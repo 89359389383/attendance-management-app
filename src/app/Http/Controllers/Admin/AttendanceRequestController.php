@@ -17,16 +17,39 @@ class AttendanceRequestController extends Controller
      * メソッド: GET
      * 認証: 管理者
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pendingRequests = AttendanceRequest::with(['user', 'attendance'])
-            ->where('status', '承認待ち')
-            ->orderBy('request_date', 'desc')
+        $sort = $request->input('sort', 'request_date'); // デフォルトソート項目
+        $direction = $request->input('direction', 'desc'); // 昇順 or 降順
+
+        // 並び替え可能なカラムのマッピング
+        $sortable = [
+            'name' => 'users.name',
+            'work_date' => 'attendances.work_date',
+            'request_date' => 'attendance_requests.request_date'
+        ];
+
+        // 入力値が不正な場合に備えたデフォルト処理
+        $sortColumn = $sortable[$sort] ?? 'attendance_requests.request_date';
+
+        // 承認待ち一覧（JOIN後のソート＆フィルタ）
+        $pendingRequests = AttendanceRequest::query()
+            ->join('users', 'attendance_requests.user_id', '=', 'users.id')
+            ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
+            ->where('attendance_requests.status', '承認待ち')
+            ->orderBy($sortColumn, $direction)
+            ->select('attendance_requests.*')
+            ->with(['user', 'attendance'])
             ->get();
 
-        $approvedRequests = AttendanceRequest::with(['user', 'attendance'])
-            ->where('status', '承認済み')
-            ->orderBy('request_date', 'desc')
+        // 承認済み一覧
+        $approvedRequests = AttendanceRequest::query()
+            ->join('users', 'attendance_requests.user_id', '=', 'users.id')
+            ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
+            ->where('attendance_requests.status', '承認済み')
+            ->orderBy($sortColumn, $direction)
+            ->select('attendance_requests.*')
+            ->with(['user', 'attendance'])
             ->get();
 
         return view('admin.attendance_request.index', compact('pendingRequests', 'approvedRequests'));
