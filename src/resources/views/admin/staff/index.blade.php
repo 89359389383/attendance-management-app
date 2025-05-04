@@ -22,7 +22,7 @@
     <table class="staff-table">
         <thead>
             <tr>
-                <th>名前</th>
+                <th>{!! sortLink('名前', 'name', request('sort'), request('direction'), null) !!}</th>
                 <th>メールアドレス</th>
                 <th>月次勤怠</th>
             </tr>

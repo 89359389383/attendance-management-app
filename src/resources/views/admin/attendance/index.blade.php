@@ -62,7 +62,7 @@
     <table class="attendance-table">
         <thead>
             <tr>
-                <th>名前</th>
+                <th>{!! sortLink('名前', 'users.name', request('sort'), request('direction'), null, ['date' => request('date'), 'name' => request('name')]) !!}</th>
                 <th>出勤</th>
                 <th>退勤</th>
                 <th>休憩</th>

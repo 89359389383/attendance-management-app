@@ -15,11 +15,21 @@ class StaffController extends Controller
      */
     public function index(Request $request)
     {
+        $name = $request->input('name');
+        $sort = $request->input('sort', 'name'); // デフォルトは名前順
+        $direction = $request->input('direction', 'asc'); // デフォルトは昇順
+
         $query = User::where('is_admin', false);
 
-        // 検索キーワードがあれば部分一致で絞り込み
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        if ($name) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+
+        // 並び替え
+        if (in_array($sort, ['name', 'email'])) {
+            $query->orderBy($sort, $direction);
+        } else {
+            $query->orderBy('name', 'asc'); // フォールバック
         }
 
         $staff = $query->get();

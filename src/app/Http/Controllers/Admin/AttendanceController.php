@@ -20,20 +20,62 @@ class AttendanceController extends Controller
      */
     public function index(Request $request)
     {
+        // リクエストパラメータの取得
         $date = $request->input('date', Carbon::today()->toDateString());
         $name = $request->input('name');
+        $sort = $request->input('sort', 'users.name'); // 並び替え対象の初期値
+        $direction = $request->input('direction', 'asc');
 
-        $query = Attendance::with('user', 'breakTimes')
-            ->where('work_date', $date);
+        // リクエストパラメータのログ
+        Log::info('勤怠一覧ページへのアクセス', [
+            'date' => $date,
+            'name' => $name,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
 
+        // クエリビルダーの初期設定
+        $query = Attendance::query()
+            ->join('users', 'attendances.user_id', '=', 'users.id')
+            ->where('work_date', $date)
+            ->with(['user', 'breakTimes'])
+            ->select('attendances.*'); // 必ず attendances.* を明示
+
+        Log::info('クエリビルダー設定', [
+            'query' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+        ]);
+
+        // 名前でのフィルタリング
         if ($name) {
-            $query->whereHas('user', function ($q) use ($name) {
-                $q->where('name', 'like', "%{$name}%");
-            });
+            Log::info('名前検索フィルタを適用', ['name' => $name]);
+            $query->where('users.name', 'like', "%{$name}%");
         }
 
+        // 並び替え処理
+        if (in_array($sort, ['users.name', 'attendances.clock_in', 'attendances.clock_out'])) {
+            Log::info('並び替え設定', ['sort' => $sort, 'direction' => $direction]);
+            $query->orderBy($sort, $direction);
+        } else {
+            Log::warning('並び替えが無効なカラム', ['sort' => $sort]);
+        }
+
+        // クエリ実行前のログ
+        Log::info('クエリ実行前', [
+            'final_query' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+        ]);
+
+        // データの取得
         $attendances = $query->get();
 
+        // 取得したデータのログ
+        Log::info('勤怠データの取得完了', [
+            'attendances_count' => $attendances->count(),
+            'date' => $date,
+        ]);
+
+        // ビューにデータを渡す
         return view('admin.attendance.index', compact('attendances', 'date'));
     }
 
