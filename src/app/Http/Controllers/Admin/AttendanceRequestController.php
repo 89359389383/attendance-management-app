@@ -19,6 +19,16 @@ class AttendanceRequestController extends Controller
      */
     public function index(Request $request)
     {
+        $name = $request->input('name');
+
+        // 入力のログを記録
+        Log::info('修正申請一覧ページへのアクセス', [
+            'sort' => $request->input('sort'),
+            'direction' => $request->input('direction'),
+            'name' => $name,
+        ]);
+
+        // ソート設定
         $sort = $request->input('sort', 'request_date'); // デフォルトソート項目
         $direction = $request->input('direction', 'desc'); // 昇順 or 降順
 
@@ -28,30 +38,51 @@ class AttendanceRequestController extends Controller
             'work_date' => 'attendances.work_date',
             'request_date' => 'attendance_requests.request_date'
         ];
-
-        // 入力値が不正な場合に備えたデフォルト処理
         $sortColumn = $sortable[$sort] ?? 'attendance_requests.request_date';
 
-        // 承認待ち一覧（JOIN後のソート＆フィルタ）
+        // 承認待ち一覧の取得
+        Log::info('承認待ち一覧の取得を開始', [
+            'sortColumn' => $sortColumn,
+            'direction' => $direction,
+        ]);
+
         $pendingRequests = AttendanceRequest::query()
             ->join('users', 'attendance_requests.user_id', '=', 'users.id')
             ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
             ->where('attendance_requests.status', '承認待ち')
+            ->when($name, function ($query) use ($name) {
+                $query->where('users.name', 'like', "%{$name}%");
+                Log::info('名前検索フィルタを適用（pending）', ['name' => $name]);
+            })
             ->orderBy($sortColumn, $direction)
             ->select('attendance_requests.*')
             ->with(['user', 'attendance'])
             ->get();
 
-        // 承認済み一覧
+        Log::info('承認待ち一覧の取得完了', ['pendingRequestsCount' => $pendingRequests->count()]);
+
+        // 承認済み一覧の取得
+        Log::info('承認済み一覧の取得を開始', [
+            'sortColumn' => $sortColumn,
+            'direction' => $direction,
+        ]);
+
         $approvedRequests = AttendanceRequest::query()
             ->join('users', 'attendance_requests.user_id', '=', 'users.id')
             ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
             ->where('attendance_requests.status', '承認済み')
+            ->when($name, function ($query) use ($name) {
+                $query->where('users.name', 'like', "%{$name}%");
+                Log::info('名前検索フィルタを適用（approved）', ['name' => $name]);
+            })
             ->orderBy($sortColumn, $direction)
             ->select('attendance_requests.*')
             ->with(['user', 'attendance'])
             ->get();
 
+        Log::info('承認済み一覧の取得完了', ['approvedRequestsCount' => $approvedRequests->count()]);
+
+        // ビューに渡して表示
         return view('admin.attendance_request.index', compact('pendingRequests', 'approvedRequests'));
     }
 

@@ -20,15 +20,20 @@ class AttendanceController extends Controller
      */
     public function index(Request $request)
     {
-        // 表示する日付（指定がなければ本日）を取得
         $date = $request->input('date', Carbon::today()->toDateString());
+        $name = $request->input('name');
 
-        // 指定された日付の勤怠を全ユーザー分取得
-        $attendances = Attendance::with('user', 'breakTimes')
-            ->where('work_date', $date)
-            ->get();
+        $query = Attendance::with('user', 'breakTimes')
+            ->where('work_date', $date);
 
-        // 勤怠一覧ビューを返す
+        if ($name) {
+            $query->whereHas('user', function ($q) use ($name) {
+                $q->where('name', 'like', "%{$name}%");
+            });
+        }
+
+        $attendances = $query->get();
+
         return view('admin.attendance.index', compact('attendances', 'date'));
     }
 

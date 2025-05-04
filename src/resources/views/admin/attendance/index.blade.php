@@ -12,13 +12,14 @@
 
     <!-- 日付切り替えナビゲーション -->
     <div class="date-nav">
-        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->subDay()->format('Y-m-d')]) }}" class="date-nav-btn">
+        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->subDay()->format('Y-m-d'), 'name' => request('name')]) }}" class="date-nav-btn">
             <span class="arrow">←</span>前日
         </a>
 
         <!-- カレンダー入力 -->
         <form method="GET" action="{{ route('admin.attendance.list') }}" id="dateForm" style="display: inline-block; position: relative;">
             <!-- 隠しinput -->
+            <input type="hidden" name="name" value="{{ request('name') }}"> {{-- 検索キーワード保持 --}}
             <input
                 type="date"
                 name="date"
@@ -36,10 +37,26 @@
             </div>
         </form>
 
-        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d')]) }}" class="date-nav-btn">
+        <a href="{{ route('admin.attendance.list', ['date' => \Carbon\Carbon::parse($date)->addDay()->format('Y-m-d'), 'name' => request('name')]) }}" class="date-nav-btn">
             翌日<span class="arrow">→</span>
         </a>
     </div>
+
+    <form method="GET" class="search-form" style="margin: 20px 0; display: flex; gap: 10px;">
+        {{-- 現在の日付を維持する --}}
+        <input type="hidden" name="date" value="{{ request('date', $date) }}">
+
+        {{-- 名前での検索 --}}
+        <input type="text" name="name" value="{{ request('name') }}" placeholder="名前で検索" class="search-input">
+
+        {{-- 検索ボタン --}}
+        <button type="submit" class="search-button">検索</button>
+
+        {{-- リセットボタン（dateは保持してnameのみリセット）--}}
+        <a href="{{ route('admin.attendance.list', ['date' => request('date', $date)]) }}" class="search-button" style="background-color: #ccc; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
+            リセット
+        </a>
+    </form>
 
     <!-- 勤怠情報テーブル -->
     <table class="attendance-table">

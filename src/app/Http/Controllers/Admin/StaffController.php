@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class StaffController extends Controller
 {
@@ -12,12 +13,17 @@ class StaffController extends Controller
      * URL: /admin/staff/list
      * メソッド: GET
      */
-    public function index()
+    public function index(Request $request)
     {
-        // 一般ユーザーのみ取得（is_admin = false）
-        $staff = User::where('is_admin', false)->get();
+        $query = User::where('is_admin', false);
 
-        // スタッフ一覧ビューを返す
+        // 検索キーワードがあれば部分一致で絞り込み
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        $staff = $query->get();
+
         return view('admin.staff.index', compact('staff'));
     }
 }

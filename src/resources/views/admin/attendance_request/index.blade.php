@@ -10,10 +10,22 @@
 <div class="container">
     <h1>修正申請一覧</h1>
 
-    {{-- タブ切り替え --}}
+    {{-- タブ切り替え＆検索 --}}
     <div class="tabs">
-        <button class="tab-button active" onclick="showTab('pending')">承認待ち</button>
-        <button class="tab-button" onclick="showTab('approved')">承認済み</button>
+        <button class="tab-button active" onclick="location.href='?tab=pending&name={{ request('name') }}'">承認待ち</button>
+        <button class="tab-button" onclick="location.href='?tab=approved&name={{ request('name') }}'">承認済み</button>
+        <form method="GET" class="search-form" style="margin: 20px 0; display: flex; gap: 10px;">
+            {{-- 名前での検索 --}}
+            <input type="text" name="name" value="{{ request('name') }}" placeholder="名前で検索" class="search-input">
+
+            {{-- 検索ボタン --}}
+            <button type="submit" class="search-button">検索</button>
+
+            {{-- リセットボタン（nameだけ初期化） --}}
+            <a href="{{ route(Route::currentRouteName()) }}" class="search-button" style="background-color: #ccc; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
+                リセット
+            </a>
+        </form>
     </div>
 
     {{-- 承認待ち一覧 --}}
