@@ -85,6 +85,9 @@ Route::middleware(['auth:admin', 'admin'])->group(function () {
 
     // 修正申請の承認処理（POST）
     Route::post('/stamp_correction_request/approve/{id}', [AdminAttendanceRequestController::class, 'approve'])->name('admin.request.approve');
+
+    // 修正申請の一括承認処理
+    Route::post('/stamp_correction_request/bulk_approve', [AdminAttendanceRequestController::class, 'bulkApprove'])->name('admin.request.bulk_approve');
 });
 
 // メール認証関連のルート

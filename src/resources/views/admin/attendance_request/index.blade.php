@@ -18,37 +18,48 @@
 
     {{-- 承認待ち一覧 --}}
     <div id="pending" class="tab-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>状態</th>
-                    <th>名前</th>
-                    <th>対象日時</th>
-                    <th>申請理由</th>
-                    <th>申請日時</th>
-                    <th>詳細</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($pendingRequests as $request)
-                <tr>
-                    <td>承認待ち</td>
-                    <td>{{ $request->user->name }}</td>
-                    <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
-                    <td>{{ $request->note }}</td>
-                    <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
-                    <td>
-                        {{-- 修正申請詳細へ遷移するボタン --}}
-                        <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="detail-link">詳細</a>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6">承認待ちの申請はありません。</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        {{-- 一括承認用フォーム --}}
+        <form method="POST" action="{{ route('admin.request.bulk_approve') }}">
+            @csrf
+            <table>
+                <thead>
+                    <tr>
+                        <th>選択</th>
+                        <th>状態</th>
+                        <th>名前</th>
+                        <th>対象日時</th>
+                        <th>申請理由</th>
+                        <th>申請日時</th>
+                        <th>詳細</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($pendingRequests as $request)
+                    <tr>
+                        <td><input type="checkbox" name="request_ids[]" value="{{ $request->id }}"></td>
+                        <td>承認待ち</td>
+                        <td>{{ $request->user->name }}</td>
+                        <td>{{ \Carbon\Carbon::parse($request->attendance->work_date)->format('Y/m/d') }}</td>
+                        <td>{{ $request->note }}</td>
+                        <td>{{ \Carbon\Carbon::parse($request->request_date)->format('Y/m/d') }}</td>
+                        <td>
+                            {{-- 修正申請詳細へ遷移するボタン --}}
+                            <a href="{{ route('admin.request.show', ['id' => $request->id]) }}" class="detail-link">詳細</a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7">承認待ちの申請はありません。</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            {{-- 一括承認ボタン --}}
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn btn-primary">選択した申請を一括承認する</button>
+            </div>
+        </form>
     </div>
 
     {{-- 承認済み一覧 --}}

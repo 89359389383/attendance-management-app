@@ -96,4 +96,77 @@ class AttendanceRequestController extends Controller
             return back()->with('error', '修正申請の承認に失敗しました。');
         }
     }
+
+    public function bulkApprove(Request $request)
+    {
+        // リクエストで選択された申請IDのリストを取得（デフォルトは空の配列）
+        $ids = $request->input('request_ids', []);
+
+        // 申請が1件も選択されていなかった場合
+        if (empty($ids)) {
+            // エラーメッセージを表示して元の画面に戻す
+            return back()->with('error', '申請を1件以上選択してください。');
+        }
+
+        // トランザクション開始：複数のデータ更新をまとめて一括で行う
+        DB::beginTransaction();
+
+        try {
+            // 各申請IDについて処理を行う
+            foreach ($ids as $id) {
+                // 修正申請を取得（IDで検索）
+                $attendanceRequest = AttendanceRequest::findOrFail($id);
+                Log::info('修正申請を取得', ['attendance_request_id' => $attendanceRequest->id]);
+
+                // 対応する勤怠情報を取得（修正申請に紐づく勤怠IDで検索）
+                $attendance = Attendance::findOrFail($attendanceRequest->attendance_id);
+                Log::info('勤怠情報を取得', ['attendance_id' => $attendance->id]);
+
+                // 勤怠情報を修正申請の内容に基づき更新
+                $attendance->clock_in = $attendanceRequest->clock_in;
+                $attendance->clock_out = $attendanceRequest->clock_out;
+                $attendance->note = $attendanceRequest->note;
+                // 更新を保存
+                $attendance->save();
+                Log::info('勤怠情報を更新しました', [
+                    'attendance_id' => $attendance->id,
+                    'clock_in' => $attendance->clock_in,
+                    'clock_out' => $attendance->clock_out,
+                    'note' => $attendance->note
+                ]);
+
+                // 修正申請のステータスを「承認済み」に変更
+                $attendanceRequest->status = '承認済み';
+                $attendanceRequest->approved_by = auth()->id(); // 承認者IDを設定
+                $attendanceRequest->approved_at = now(); // 承認日時を設定
+                // 更新を保存
+                $attendanceRequest->save();
+                Log::info('修正申請を承認済みに更新', [
+                    'attendance_request_id' => $attendanceRequest->id,
+                    'status' => $attendanceRequest->status,
+                    'approved_by' => $attendanceRequest->approved_by,
+                    'approved_at' => $attendanceRequest->approved_at
+                ]);
+            }
+
+            // 全ての申請が正常に承認された場合、コミットして確定
+            DB::commit();
+            Log::info('一括承認処理が成功しました', ['approved_request_ids' => $ids]);
+
+            // 承認が完了した旨のメッセージとともに一覧ページにリダイレクト
+            return redirect()->route('admin.request.list')->with('success', '選択された修正申請をすべて承認しました。');
+        } catch (\Exception $e) {
+            // エラー発生時はロールバックして変更を元に戻す
+            DB::rollBack();
+            // エラー内容をログに記録
+            Log::error('一括承認処理に失敗しました', [
+                'error_message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_ids' => $ids
+            ]);
+
+            // エラーメッセージとともに元の画面に戻す
+            return back()->with('error', '一括承認に失敗しました。');
+        }
+    }
 }
