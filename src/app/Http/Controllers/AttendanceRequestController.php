@@ -20,7 +20,6 @@ class AttendanceRequestController extends Controller
     {
         $sort = $request->input('sort', 'request_date');
         $direction = $request->input('direction', 'desc');
-        $name = $request->input('name');
 
         $sortable = [
             'name' => 'users.name',
@@ -29,28 +28,31 @@ class AttendanceRequestController extends Controller
         ];
         $sortColumn = $sortable[$sort] ?? 'attendance_requests.request_date';
 
-        // 承認待ち
+        // ログインユーザーのIDを取得
+        $userId = Auth::id();
+
+        // 承認待ち（ログイン中ユーザーに限定）
         $pendingRequests = AttendanceRequest::query()
             ->join('users', 'attendance_requests.user_id', '=', 'users.id')
             ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
-            ->when($name, fn($query) => $query->where('users.name', 'like', "%{$name}%"))
+            ->where('attendance_requests.user_id', $userId)
             ->where('attendance_requests.status', '承認待ち')
             ->orderBy($sortColumn, $direction)
             ->select('attendance_requests.*')
             ->with(['user', 'attendance'])
             ->get();
 
-        // 承認済み
+        // 承認済み（ログイン中ユーザーに限定）
         $approvedRequests = AttendanceRequest::query()
             ->join('users', 'attendance_requests.user_id', '=', 'users.id')
             ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
-            ->when($name, fn($query) => $query->where('users.name', 'like', "%{$name}%"))
+            ->where('attendance_requests.user_id', $userId)
             ->where('attendance_requests.status', '承認済み')
             ->orderBy($sortColumn, $direction)
             ->select('attendance_requests.*')
             ->with(['user', 'attendance'])
             ->get();
 
-        return view('admin.attendance_request.index', compact('pendingRequests', 'approvedRequests'));
+        return view('attendance_request.index', compact('pendingRequests', 'approvedRequests'));
     }
 }

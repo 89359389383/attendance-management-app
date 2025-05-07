@@ -143,6 +143,19 @@ textarea {
     padding: 10px 20px 10px 20px;
 }
 
+.approve-button-approved {
+    background-color: #5d5d5d;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin-top: 40px;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+
 /* ===========================================================
 【PCサイズ対応】（幅1400px〜1540pxの間で崩れないように調整）
 =========================================================== */

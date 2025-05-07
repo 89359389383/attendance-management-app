@@ -57,7 +57,7 @@ class AttendanceRequestController extends Controller
             ->orderBy($sortColumn, $direction)
             ->select('attendance_requests.*')
             ->with(['user', 'attendance'])
-            ->get();
+            ->paginate(30);;
 
         Log::info('承認待ち一覧の取得完了', ['pendingRequestsCount' => $pendingRequests->count()]);
 
@@ -78,7 +78,7 @@ class AttendanceRequestController extends Controller
             ->orderBy($sortColumn, $direction)
             ->select('attendance_requests.*')
             ->with(['user', 'attendance'])
-            ->get();
+            ->paginate(30);
 
         Log::info('承認済み一覧の取得完了', ['approvedRequestsCount' => $approvedRequests->count()]);
 
