@@ -166,7 +166,7 @@ class AttendanceEditUserTest extends TestCase
 
         // 4. 修正後にリダイレクトされることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
-        $response->assertRedirect(route('attendance.list'));
+        $response->assertRedirect(route('request.list'));
 
         // 5. 申請レコードが作成されていることを確認
         $this->assertDatabaseHas('attendance_requests', [

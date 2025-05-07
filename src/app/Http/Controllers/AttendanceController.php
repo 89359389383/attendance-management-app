@@ -204,20 +204,38 @@ class AttendanceController extends Controller
             'リクエストデータ' => $request->all(),
         ]);
 
-        // 修正申請テーブルにレコード追加
-        \App\Models\AttendanceRequest::create([
-            'user_id' => Auth::id(),
-            'attendance_id' => $attendance->id,
-            'request_date' => now()->toDateString(),
-            'clock_in' => $request->clock_in,
-            'clock_out' => $request->clock_out,
-            'note' => $request->note,
-            'status' => '承認待ち',
-        ]);
+        // ★変更箇所：既に承認待ちの修正申請があるかを確認
+        $existingRequest = \App\Models\AttendanceRequest::where('attendance_id', $attendance->id)
+            ->where('user_id', Auth::id())
+            ->where('status', '承認待ち')
+            ->latest()
+            ->first();
 
-        // 休憩申請（request_break_times）も保存
-        RequestBreakTime::where('attendance_id', $attendance->id)->delete();
+        if ($existingRequest) {
+            // ★変更箇所：既存の申請を上書き更新
+            $existingRequest->update([
+                'clock_in' => $request->clock_in,
+                'clock_out' => $request->clock_out,
+                'note' => $request->note,
+                'request_date' => now()->toDateString(),
+            ]);
 
+            // ★変更箇所：既存の休憩申請を削除
+            RequestBreakTime::where('attendance_id', $attendance->id)->delete();
+        } else {
+            // 初回申請：新規作成
+            \App\Models\AttendanceRequest::create([
+                'user_id' => Auth::id(),
+                'attendance_id' => $attendance->id,
+                'request_date' => now()->toDateString(),
+                'clock_in' => $request->clock_in,
+                'clock_out' => $request->clock_out,
+                'note' => $request->note,
+                'status' => '承認待ち',
+            ]);
+        }
+
+        // 共通処理：休憩申請の再登録
         $breakStarts = $request->input('break_start', []);
         $breakEnds = $request->input('break_end', []);
 
@@ -229,6 +247,7 @@ class AttendanceController extends Controller
                     'break_start' => $startTime,
                     'break_end' => $endTime,
                 ]);
+
                 // ログ出力：休憩申請の追加
                 Log::info('休憩申請が追加されました', [
                     '勤怠ID' => $attendance->id,
@@ -243,6 +262,6 @@ class AttendanceController extends Controller
             '勤怠ID' => $attendance->id,
         ]);
 
-        return redirect()->route('attendance.list')->with('success', '修正申請が完了しました。');
+        return redirect()->route('request.list')->with('success', '修正申請が完了しました。');
     }
 }
