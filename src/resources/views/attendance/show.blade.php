@@ -96,9 +96,7 @@
     <div class="card">
         <div class="row">
             <div class="label">名前</div>
-            <div class="content name-content">
-                <span class="user-name">{{ $attendance->user->name }}</span>
-            </div>
+            <div class="content">{{ $attendance->user->name }}</div>
         </div>
 
         <div class="row">
@@ -107,12 +105,12 @@
             $date = \Carbon\Carbon::parse($attendance->work_date);
             @endphp
             <div class="content date-content">
-                <span class="year">{{ $date->year }}年</span>
-                <span class="month-day">{{ $date->format('n月j日') }}</span>
+                <span>{{ $date->year }}年</span>
+                <span class="month-day-approved">{{ $date->format('n月j日') }}</span>
             </div>
         </div>
 
-        <div class="row">
+        <div class=" row">
             <div class="label">出勤・退勤</div>
             <div class="content">
                 <div class="time-range">
@@ -127,9 +125,11 @@
         <div class="row">
             <div class="label">休憩{{ $index + 1 }}</div>
             <div class="content">
-                <span class="break-start">{{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }}</span>
-                <span class="time-separator">～</span>
-                <span class="break-end">{{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}</span>
+                <div class="time-range">
+                    <span class="break-start">{{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }}</span>
+                    <span class="time-separator">～</span>
+                    <span class="break-end">{{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}</span>
+                </div>
             </div>
         </div>
         @endforeach
@@ -140,10 +140,12 @@
                 {{ $attendanceRequest->note }}
             </div>
         </div>
-        <div class="button-container">
-            <button class="approve-button-approved" disabled>承認済み</button>
-        </div>
     </div>
+
+    <div class="button-container">
+        <button class="approve-button-approved" disabled>承認済み</button>
+    </div>
+
     @else
     {{-- 通常の修正フォーム表示（申請なし or 却下済み） --}}
     <form action="{{ route('attendance.update', $attendance->id) }}" method="POST">
