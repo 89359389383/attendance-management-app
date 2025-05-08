@@ -31,9 +31,7 @@
         </div>
 
         <!-- 月選択モーダル -->
-        <!-- 月選択モーダル -->
-        <div id="monthModal" style="display:none; position:absolute; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #ccc; padding:10px; z-index:999;">
-
+        <div id="monthModal" style="display:none; position:absolute; top:100px; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #ccc; padding:10px; z-index:999;">
             <!-- ×ボタン -->
             <div style="text-align:right; margin-bottom:5px;">
                 <span id="closeMonthModal" style="cursor:pointer; font-weight:bold;">×</span>
@@ -49,6 +47,7 @@
         </div>
 
         <!-- 勤務集計情報 -->
+        <!-- 勤務集計情報 -->
         <div class="summary-box">
             <div class="summary-item">
                 <span class="summary-label">勤務日数：</span>
@@ -58,20 +57,26 @@
                 <span class="summary-label">合計勤務時間：</span>
                 <span class="summary-value">
                     @php
-                    $totalWorkMinutes = 0;
+                    $totalWorkSeconds = 0;
                     foreach ($attendances as $attendance) {
                     if ($attendance->clock_in && $attendance->clock_out) {
-                    $breakMinutes = $attendance->breakTimes->sum(function ($break) {
+                    $breakSeconds = $attendance->breakTimes->sum(function ($break) {
                     if ($break->break_start && $break->break_end) {
-                    return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
+                    return \Carbon\Carbon::parse($break->break_end)->diffInSeconds($break->break_start);
                     }
                     return 0;
                     });
-                    $total = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes($attendance->clock_in) - $breakMinutes;
-                    $totalWorkMinutes += max(0, $total);
+                    $workSeconds = \Carbon\Carbon::parse($attendance->clock_out)->diffInSeconds($attendance->clock_in) - $breakSeconds;
+                    $totalWorkSeconds += max(0, $workSeconds);
                     }
                     }
-                    echo floor($totalWorkMinutes / 60) . '時間' . str_pad($totalWorkMinutes % 60, 2, '0', STR_PAD_LEFT) . '分';
+
+                    // 修正: 四捨五入で分数を表示
+                    $roundedTotalMinutes = round($totalWorkSeconds / 60); // 修正: 秒 → 分に四捨五入
+                    $hours = floor($roundedTotalMinutes / 60); // 修正: 時間を算出
+                    $minutes = $roundedTotalMinutes % 60; // 修正: 残りの分を算出
+
+                    echo $hours . '時間' . str_pad($minutes, 2, '0', STR_PAD_LEFT) . '分'; // 修正: 表示形式
                     @endphp
                 </span>
             </div>
@@ -99,25 +104,28 @@
                         @endphp
                         {{ $workDate->format('m/d') }}({{ $weekdays[$workDate->dayOfWeek] }})
                     </td>
-                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}</td>
-                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i:s') : '' }}</td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i:s') : '' }}</td>
                     <td>
                         @php
-                        $totalBreak = $attendance->breakTimes->sum(function ($break) {
+                        $totalBreakSeconds = $attendance->breakTimes->sum(function ($break) {
                         if ($break->break_start && $break->break_end) {
-                        return \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start);
+                        $start = \Carbon\Carbon::parse($break->break_start);
+                        $end = \Carbon\Carbon::parse($break->break_end);
+                        return $end->diffInSeconds($start);
                         }
                         return 0;
                         });
                         @endphp
-                        {{ sprintf('%d:%02d', floor($totalBreak / 60), $totalBreak % 60) }}
+                        {{ sprintf('%d:%02d', floor($totalBreakSeconds / 3600), floor(($totalBreakSeconds % 3600) / 60)) }}
                     </td>
                     <td>
                         @php
                         $workTime = '';
                         if ($attendance->clock_in && $attendance->clock_out) {
-                        $total = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes($attendance->clock_in) - $totalBreak;
-                        $workTime = floor($total / 60) . ':' . str_pad($total % 60, 2, '0', STR_PAD_LEFT);
+                        $workSeconds = \Carbon\Carbon::parse($attendance->clock_out)->diffInSeconds(\Carbon\Carbon::parse($attendance->clock_in)) - $totalBreakSeconds;
+                        $workSeconds = max(0, $workSeconds);
+                        $workTime = floor($workSeconds / 3600) . ':' . str_pad(floor(($workSeconds % 3600) / 60), 2, '0', STR_PAD_LEFT);
                         }
                         echo $workTime;
                         @endphp
@@ -153,5 +161,4 @@
         }
     });
 </script>
-
 @endsection
