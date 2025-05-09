@@ -22,7 +22,7 @@
             <button type="submit" class="search-button">検索</button>
 
             {{-- リセットボタン（nameだけ初期化） --}}
-            <a href="{{ route(Route::currentRouteName()) }}" class="search-button" style="background-color: #ccc; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
+            <a href="{{ route(Route::currentRouteName()) }}" class="search-button" style="background-color: #e4e4e4; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
                 リセット
             </a>
         </form>

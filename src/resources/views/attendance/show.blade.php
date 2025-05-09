@@ -32,7 +32,6 @@
     {{-- ▼ 勤怠修正申請フォーム（出勤・退勤・休憩・備考を送信） --}}
     {{-- 対応要件: FN027〜FN030 --}}
     @if ($attendanceRequest && $attendanceRequest->status === '承認待ち')
-    <p style="color: red;">承認待ちのため修正はできます。</p>
     <form action="{{ route('attendance.update', $attendance->id) }}" method="POST">
         @csrf
         @method('PUT') {{-- PUTメソッドで更新処理を行う --}}

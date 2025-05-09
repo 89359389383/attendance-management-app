@@ -18,8 +18,8 @@
                 <span class="arrow">←</span>前月
             </a>
         </div>
-        <div class="month-display">
-            <span id="calendar-icon" class="calendar-icon" style="cursor: pointer;">📅</span>
+        <div class="month-display" onclick="toggleMonthModal()" style="cursor: pointer;">
+            <span class="calendar-icon">📅</span>
             <span>{{ \Carbon\Carbon::parse($yearMonth)->format('Y年m月') }}</span>
         </div>
         <div class="month-nav">
@@ -102,11 +102,13 @@
         <span class="close" style="cursor: pointer;">×</span>
         <ul class="month-list">
             @php
-            $base = \Carbon\Carbon::parse($yearMonth)->startOfMonth(); // ← 表示中の月を基準に修正
+            $base = \Carbon\Carbon::parse($yearMonth)->startOfMonth(); // 現在の月
+            $startMonth = $base->copy()->subMonths(11); // 過去11カ月分を開始点に
             @endphp
-            @for ($i = -6; $i <= 6; $i++)
+
+            @for ($i = 0; $i < 12; $i++)
                 @php
-                $targetMonth=$base->copy()->addMonths($i);
+                $targetMonth=$startMonth->copy()->addMonths($i);
                 $ym = $targetMonth->format('Y-m');
                 @endphp
                 <li>
@@ -120,6 +122,28 @@
 </div>
 
 <script>
+    function toggleMonthModal() {
+        const modal = document.getElementById('monthModal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const closeBtn = document.querySelector('#monthModal .close');
+        const modal = document.getElementById('monthModal');
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        }
+
+        // 背景クリックで閉じる
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
     document.addEventListener('DOMContentLoaded', function() {
         const icon = document.getElementById('calendar-icon');
         const modal = document.getElementById('monthModal');

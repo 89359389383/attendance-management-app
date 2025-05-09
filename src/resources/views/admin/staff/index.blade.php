@@ -14,7 +14,7 @@
         <input type="text" name="name" value="{{ request('name') }}" placeholder="名前で検索" class="search-input">
         <button type="submit" class="search-button">検索</button>
         {{-- リセットボタン（nameのみ初期化） --}}
-        <a href="{{ route(Route::currentRouteName()) }}" class="search-button" style="background-color: #ccc; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
+        <a href="{{ route(Route::currentRouteName()) }}" class="search-button" style="background-color: #e4e4e4; text-decoration: none; padding: 10px 8px; border-radius: 4px;">
             リセット
         </a>
     </form>

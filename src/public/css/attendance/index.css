@@ -185,6 +185,48 @@ header {
     text-decoration: none;
 }
 
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px 20px;
+    margin: auto;
+    border-radius: 10px;
+    width: 170px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.month-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.month-list a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.month-list a:hover {
+    text-decoration: underline;
+}
+
 /* ===========================================================
 【PCサイズ対応】（幅1400px〜1540pxの間で見た目が崩れないように調整）
 =========================================================== */

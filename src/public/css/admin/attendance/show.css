@@ -43,6 +43,13 @@ body {
     border-bottom: none;
 }
 
+.alert {
+    color: red;
+    font-size: 16px;
+    margin-left: 35px;
+    margin-bottom: 10px;
+}
+
 .label {
     width: 30%;
     padding: 20px 20px 20px 40px;

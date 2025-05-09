@@ -32,6 +32,13 @@ h1::before {
     background-color: #000;
 }
 
+.alert {
+    color: red;
+    font-size: 16px;
+    margin-left: 35px;
+    margin-bottom: 10px;
+}
+
 .card {
     background-color: #fff;
     border-radius: 8px;

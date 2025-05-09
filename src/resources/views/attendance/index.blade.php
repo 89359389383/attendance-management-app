@@ -31,22 +31,22 @@
         </div>
 
         <!-- 月選択モーダル -->
-        <div id="monthModal" style="display:none; position:absolute; top:100px; left:50%; transform:translateX(-50%); background:#fff; border:1px solid #ccc; padding:10px; z-index:999;">
-            <!-- ×ボタン -->
-            <div style="text-align:right; margin-bottom:5px;">
-                <span id="closeMonthModal" style="cursor:pointer; font-weight:bold;">×</span>
+        <div id="monthModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <!-- ×ボタン -->
+                <span class="close" style="cursor: pointer;">×</span>
+                <ul class="month-list">
+                    @php
+                    $startMonth = $currentMonth->copy()->subMonths(11);
+                    for ($i = 0; $i < 12; $i++) {
+                        $month=$startMonth->copy()->addMonths($i);
+                        echo '<a href="' . route('attendance.list', ['month' => $month->format('Y-m')]) . '" style="display:block; text-align:center; margin:5px 0;">' . $month->format('Y年m月') . '</a>';
+                        }
+                        @endphp
+                </ul>
             </div>
-
-            @php
-            $startMonth = $currentMonth->copy()->subMonths(11);
-            for ($i = 0; $i < 12; $i++) {
-                $month=$startMonth->copy()->addMonths($i);
-                echo '<a href="' . route('attendance.list', ['month' => $month->format('Y-m')]) . '" style="display:block; text-align:center; margin:5px 0;">' . $month->format('Y年m月') . '</a>';
-                }
-                @endphp
         </div>
 
-        <!-- 勤務集計情報 -->
         <!-- 勤務集計情報 -->
         <div class="summary-box">
             <div class="summary-item">
@@ -104,8 +104,8 @@
                         @endphp
                         {{ $workDate->format('m/d') }}({{ $weekdays[$workDate->dayOfWeek] }})
                     </td>
-                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i:s') : '' }}</td>
-                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i:s') : '' }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '' }}</td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '' }}</td>
                     <td>
                         @php
                         $totalBreakSeconds = $attendance->breakTimes->sum(function ($break) {
@@ -147,18 +147,44 @@
 <script>
     function toggleMonthModal() {
         const modal = document.getElementById('monthModal');
-        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const closeBtn = document.getElementById('closeMonthModal');
+        const closeBtn = document.querySelector('#monthModal .close');
         const modal = document.getElementById('monthModal');
 
-        if (closeBtn && modal) {
+        if (closeBtn) {
             closeBtn.addEventListener('click', function() {
                 modal.style.display = 'none';
             });
         }
+
+        // 背景クリックで閉じる
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const icon = document.getElementById('calendar-icon');
+        const modal = document.getElementById('monthModal');
+        const closeBtn = modal.querySelector('.close');
+
+        icon.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
     });
 </script>
 @endsection

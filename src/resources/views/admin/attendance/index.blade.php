@@ -53,13 +53,13 @@
         <button type="submit" class="search-button">検索</button>
 
         {{-- リセットボタン（dateは保持してnameのみリセット）--}}
-        <a href="{{ route('admin.attendance.list', ['date' => request('date', $date)]) }}" class="search-button" style="background-color: #ccc; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
+        <a href="{{ route('admin.attendance.list', ['date' => request('date', $date)]) }}" class="search-button" style="background-color:#e4e4e4; color:black; text-decoration: none; padding: 8px; border-radius: 4px;">
             リセット
         </a>
     </form>
 
     <!-- 勤怠情報テーブル -->
-    <table class="attendance-table">
+    <table class=" attendance-table">
         <thead>
             <tr>
                 <th>{!! sortLink('名前', 'users.name', request('sort'), request('direction'), null, ['date' => request('date'), 'name' => request('name')]) !!}</th>
