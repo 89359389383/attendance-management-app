@@ -123,21 +123,32 @@ class AttendanceListUserTest extends TestCase
      */
     public function test_clicking_detail_button_redirects_to_detail_page()
     {
-        // 1. ユーザーを作成
+        // 1. 勤怠情報が登録されたユーザーにログインをする
         $user = User::factory()->create()->first();
 
-        // 2. 勤怠情報を作成
+        // 今月の日付（例：2025年5月10日）で勤怠データ作成
+        $workDate = Carbon::create(2025, 5, 10);
+        Carbon::setTestNow($workDate); // 月フィルタに確実に一致させる
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
+            'work_date' => $workDate->format('Y-m-d'),
         ]);
 
-        // 3. 勤怠詳細ページにアクセス
-        $response = $this->actingAs($user)->get("/attendance/{$attendance->id}");
+        $this->actingAs($user);
 
-        // 4. ステータスコードが200であることを確認
+        // 2. 勤怠一覧ページを開く
+        $response = $this->get('/attendance/list?month=' . $workDate->format('Y-m')); // 月指定も明示的に
         $response->assertStatus(200);
+        $html = $response->getContent();
 
-        // 5. 勤怠詳細が表示されていることを確認
-        $response->assertSee('勤怠詳細');
+        // 3. 詳細リンクが含まれていることを確認
+        $this->assertStringContainsString("/attendance/{$attendance->id}", $html);
+
+        // 4. 詳細ページに遷移し、ステータスと表示確認
+        $detailResponse = $this->get("/attendance/{$attendance->id}");
+        $detailResponse->assertStatus(200);
+        $detailResponse->assertSee('勤怠詳細');
+
+        Carbon::setTestNow(); // テスト時間のリセット
     }
 }

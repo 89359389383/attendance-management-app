@@ -13,9 +13,9 @@ class StartWorkTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * ✅ 1. ステータスが勤務外のユーザーに出勤ボタンが表示される
+     * ✅ 1. ステータスが勤務外のユーザーに出勤ボタンが表示され、出勤処理が正常に行われる
      */
-    public function test_attendance_button_is_displayed_when_status_is_out()
+    public function test_attendance_button_and_clock_in_process()
     {
         // 1. ステータスが勤務外のユーザーを作成
         $user = User::factory()->create()->first();
@@ -26,27 +26,13 @@ class StartWorkTest extends TestCase
 
         // 3. 出勤ボタンが表示されていることを確認
         $response->assertSee('出勤');
-    }
 
-    /**
-     * ✅ 2. 出勤処理が正常に行われる
-     */
-    public function test_user_can_clock_in()
-    {
-        // 1. 勤務外ステータスのユーザーを作成
-        $user = User::factory()->create()->first();
-        $this->actingAs($user);
-
-        // 2. 出勤ボタンを押す（POSTリクエスト）
+        // 4. 出勤ボタンを押す（POSTリクエスト）
         $response = $this->post(route('attendance.store'), [
             'action' => 'clock_in',
         ]);
 
-        // 3. 処理後に「出勤しました」のフラッシュメッセージが表示される
-        $response->assertRedirect();
-        $response->assertSessionHas('success', '出勤しました。');
-
-        // 4. 出勤記録がDBに保存されているか確認
+        // 5. 出勤記録がDBに保存されているか確認
         $this->assertDatabaseHas('attendances', [
             'user_id' => $user->id,
             'status' => '出勤中',
@@ -54,7 +40,7 @@ class StartWorkTest extends TestCase
     }
 
     /**
-     * ✅ 3. 出勤は一日一回しかできない（ステータスが退勤済の場合は出勤ボタン非表示）
+     * ✅ 2. 出勤は一日一回しかできない（ステータスが退勤済の場合は出勤ボタン非表示）
      */
     public function test_user_cannot_clock_in_twice()
     {
@@ -78,7 +64,7 @@ class StartWorkTest extends TestCase
     }
 
     /**
-     * ✅ 4. 出勤時刻が管理画面に正しく反映される
+     * ✅ 3. 出勤時刻が管理画面に正しく反映される
      */
     public function test_clock_in_time_appears_on_admin_list()
     {

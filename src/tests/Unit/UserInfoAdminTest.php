@@ -17,20 +17,18 @@ class UserInfoAdminTest extends TestCase
      */
     public function test_admin_can_view_all_staff_names_and_emails()
     {
-        // 1. 管理者ユーザーを作成
+        // 手順1: 管理者ユーザーを作成
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
-        // 2. 一般ユーザーを複数作成
-        /** @var \App\Models\User $user1 */
+        // 手順2: 一般ユーザーを複数作成
         $user1 = User::factory()->create(['name' => '一般ユーザー1', 'email' => 'user1@example.com']);
-        /** @var \App\Models\User $user2 */
         $user2 = User::factory()->create(['name' => '一般ユーザー2', 'email' => 'user2@example.com']);
 
-        // 3. 管理者としてログインしスタッフ一覧ページにアクセス
+        // 手順3: 管理者としてログインし、スタッフ一覧ページにアクセス
         $response = $this->actingAs($admin, 'admin')->get(route('admin.staff.list'));
 
-        // 4. 各ユーザーの氏名とメールアドレスが表示されていることを確認
+        // 手順4: ユーザーの氏名とメールアドレスが表示されていることを確認
         $response->assertStatus(200);
         $response->assertSee('一般ユーザー1');
         $response->assertSee('user1@example.com');
@@ -43,12 +41,11 @@ class UserInfoAdminTest extends TestCase
      */
     public function test_admin_can_view_monthly_attendance_for_selected_user()
     {
-        // 1. 管理者ユーザーを作成
+        // 手順1: 管理者ユーザーを作成
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
-        // 2. 一般ユーザーと勤怠データを作成
-        /** @var \App\Models\User $user */
+        // 手順2: 勤怠データを持つ一般ユーザーを作成
         $user = User::factory()->create(['name' => '勤怠ユーザー']);
         Attendance::factory()->create([
             'user_id' => $user->id,
@@ -58,10 +55,13 @@ class UserInfoAdminTest extends TestCase
             'status' => '退勤済',
         ]);
 
-        // 3. 管理者として対象ユーザーの月次勤怠一覧ページにアクセス
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.staff', ['id' => $user->id]));
+        // 手順3: 管理者としてログインする
+        $this->actingAs($admin, 'admin');
 
-        // 4. 勤怠ユーザーの名前と出勤・退勤時間が含まれていることを確認
+        // 手順4: 対象ユーザーの月次勤怠一覧ページにアクセス
+        $response = $this->get(route('admin.attendance.staff', ['id' => $user->id]));
+
+        // 手順5: 勤怠ユーザーの名前と出退勤時刻が表示されていることを確認
         $response->assertStatus(200);
         $response->assertSee('勤怠ユーザー');
         $response->assertSee('09:00');
@@ -73,12 +73,11 @@ class UserInfoAdminTest extends TestCase
      */
     public function test_previous_month_button_displays_previous_month_data()
     {
-        // 1. 管理者ユーザーを作成
+        // 手順1: 管理者ユーザーを作成
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
-        // 2. 前月の日付と勤怠情報を持つユーザーを作成
-        /** @var \App\Models\User $user */
+        // 手順2: 前月の勤怠データを持つユーザーを作成
         $user = User::factory()->create(['name' => '前月ユーザー']);
         $lastMonth = Carbon::now()->subMonth()->format('Y-m');
         Attendance::factory()->create([
@@ -89,13 +88,16 @@ class UserInfoAdminTest extends TestCase
             'status' => '退勤済',
         ]);
 
-        // 3. 管理者が前月の勤怠データを閲覧
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.staff', [
+        // 手順3: 管理者としてログインする
+        $this->actingAs($admin, 'admin');
+
+        // 手順4: 「前月」パラメータ付きで勤怠一覧ページにアクセスする
+        $response = $this->get(route('admin.attendance.staff', [
             'id' => $user->id,
             'month' => $lastMonth,
         ]));
 
-        // 4. 勤怠内容とユーザー名が表示されているか確認
+        // 手順5: 勤怠内容とユーザー名が表示されていることを確認
         $response->assertStatus(200);
         $response->assertSee('前月ユーザー');
         $response->assertSee('08:30');
@@ -107,12 +109,11 @@ class UserInfoAdminTest extends TestCase
      */
     public function test_next_month_button_displays_next_month_data()
     {
-        // 1. 管理者ユーザーを作成
+        // 手順1: 管理者ユーザーを作成
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
-        // 2. 翌月の勤怠情報を持つユーザーを作成
-        /** @var \App\Models\User $user */
+        // 手順2: 翌月の勤怠データを持つユーザーを作成
         $user = User::factory()->create(['name' => '翌月ユーザー']);
         $nextMonth = Carbon::now()->addMonth()->format('Y-m');
         Attendance::factory()->create([
@@ -123,13 +124,16 @@ class UserInfoAdminTest extends TestCase
             'status' => '退勤済',
         ]);
 
-        // 3. 管理者が翌月の勤怠データを閲覧
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.staff', [
+        // 手順3: 管理者としてログインする
+        $this->actingAs($admin, 'admin');
+
+        // 手順4: 「翌月」パラメータ付きで勤怠一覧ページにアクセスする
+        $response = $this->get(route('admin.attendance.staff', [
             'id' => $user->id,
             'month' => $nextMonth,
         ]));
 
-        // 4. 勤怠内容とユーザー名が表示されているか確認
+        // 手順5: 勤怠内容とユーザー名が表示されていることを確認
         $response->assertStatus(200);
         $response->assertSee('翌月ユーザー');
         $response->assertSee('10:00');
@@ -141,12 +145,11 @@ class UserInfoAdminTest extends TestCase
      */
     public function test_clicking_detail_link_redirects_to_attendance_detail()
     {
-        // 1. 管理者ユーザーを作成
+        // 手順1: 管理者ユーザーを作成
         /** @var \App\Models\User $admin */
         $admin = User::factory()->create(['is_admin' => true]);
 
-        // 2. 勤怠データを持つユーザーを作成
-        /** @var \App\Models\User $user */
+        // 手順2: 勤怠データを持つユーザーを作成
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
@@ -156,10 +159,13 @@ class UserInfoAdminTest extends TestCase
             'status' => '退勤済',
         ]);
 
-        // 3. 詳細リンクにアクセス
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.attendance.detail', ['id' => $attendance->id]));
+        // 手順3: 管理者としてログインする
+        $this->actingAs($admin, 'admin');
 
-        // 4. 勤怠詳細画面が正常に表示されていることを確認
+        // 手順4: 「詳細」リンクにアクセスする
+        $response = $this->get(route('admin.attendance.detail', ['id' => $attendance->id]));
+
+        // 手順5: 勤怠詳細画面が正常に表示されていることを確認
         $response->assertStatus(200);
         $response->assertSee('勤怠詳細');
         $response->assertSee('09:00');

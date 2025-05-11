@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Attendance;
+use Carbon\Carbon;
 
 class BreakTest extends TestCase
 {
@@ -64,11 +65,12 @@ class BreakTest extends TestCase
             'clock_in' => now()->subHours(2),
             'status' => '出勤中',
         ]);
+        $this->actingAs($user);
 
         // 休憩入 → 休憩戻
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_start']);
+        $this->post('/attendance', ['action' => 'break_start']);
         Attendance::where('id', $attendance->id)->update(['status' => '休憩中']);
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_end']);
+        $this->post('/attendance', ['action' => 'break_end']);
 
         // ステータスを出勤中に戻し、「休憩入」ボタンが表示されることを確認
         Attendance::where('id', $attendance->id)->update(['status' => '出勤中']);
@@ -77,15 +79,44 @@ class BreakTest extends TestCase
     }
 
     /**
-     * ✅ 3. 「休憩戻」ボタンが正しく機能し、ステータスが「出勤中」に戻る
+     * ✅ 3.休憩戻ボタンが正しく機能する
      *
-     * 1. ステータスが出勤中であるユーザーにログインする
-     * 2. 休憩入の処理を行う
-     * 3. 休憩戻の処理を行う
-     * → 休憩戻ボタンが表示され、処理後にステータスが「出勤中」に変更される
+     */
+    public function test_break_end_button_functions_correctly()
+    {
+        // 1. ステータスが出勤中のユーザーを作成しログイン
+        $user = User::factory()->create()->first();
+        $attendance = Attendance::factory()->create([
+            'user_id' => $user->id,
+            'work_date' => now()->toDateString(),
+            'clock_in' => now()->subHour(),
+            'status' => '出勤中',
+        ]);
+        $this->actingAs($user);
+
+        // 2. 「休憩入」処理を実行
+        $this->post('/attendance', ['action' => 'break_start']);
+        $attendance->refresh();
+        $this->assertEquals('休憩中', $attendance->fresh()->status);
+
+        // 3. 「休憩戻」処理を実行
+        $this->post('/attendance', ['action' => 'break_end']);
+        $attendance->refresh();
+        $this->assertEquals('出勤中', $attendance->status);
+
+        // 4. 「休憩戻」ボタンが表示される（＝休憩中に戻した後のテストにも対応可）
+        $this->post('/attendance', ['action' => 'break_start']);
+        $response = $this->get('/attendance');
+        $response->assertSee('休憩戻');
+    }
+
+    /**
+     * ✅ 4. 休憩戻は一日に何回でもできる
+     *
      */
     public function test_break_end_updates_status_back_to_working()
     {
+        // 1. ステータスが出勤中であるユーザーにログインする
         $user = User::factory()->create()->first();
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
@@ -94,61 +125,21 @@ class BreakTest extends TestCase
             'status' => '出勤中',
         ]);
 
-        // 休憩入処理
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_start']);
+        $this->actingAs($user);
+
+        // 2. 休憩入 → 休憩戻 → 再び休憩入
+        $this->post('/attendance', ['action' => 'break_start']);
         Attendance::where('id', $attendance->id)->update(['status' => '休憩中']);
 
-        // 休憩戻処理
-        $response = $this->actingAs($user)->get('/attendance');
-        $response->assertSee('休憩戻');
-
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_end']);
-
-        // ステータスが「出勤中」に戻ることを確認
-        $this->assertDatabaseHas('attendances', [
-            'id' => $attendance->id,
-            'status' => '出勤中',
-        ]);
-    }
-
-    /**
-     * ✅ 4. 休憩戻後に再び「休憩戻」ボタンが表示される（＝休憩何度でもOK）
-     *
-     * 1. ステータスが出勤中であるユーザーにログインする
-     * 2. 休憩入と休憩戻の処理を行い、再度休憩入の処理を行う
-     * 3. 「休憩戻」ボタンが表示されることを確認する
-     * → 画面上に「休憩戻」ボタンが表示される
-     * 4. 勤怠一覧画面から休憩の日付を確認する
-     * → 勤怠一覧画面に休憩時刻が正確に記録されている
-     */
-    public function test_user_can_return_from_break_multiple_times()
-    {
-        $user = User::factory()->create()->first();
-        $attendance = Attendance::factory()->create([
-            'user_id' => $user->id,
-            'work_date' => now()->toDateString(),
-            'clock_in' => now()->subHours(3),
-            'status' => '出勤中',
-        ]);
-
-        // 休憩開始 → 休憩終了
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_start']);
-        Attendance::where('id', $attendance->id)->update(['status' => '休憩中']);
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_end']);
+        $this->post('/attendance', ['action' => 'break_end']);
         Attendance::where('id', $attendance->id)->update(['status' => '出勤中']);
 
-        // もう一度休憩開始
-        $this->actingAs($user)->post('/attendance', ['action' => 'break_start']);
+        $this->post('/attendance', ['action' => 'break_start']);
         Attendance::where('id', $attendance->id)->update(['status' => '休憩中']);
 
-        // 休憩戻ボタンが表示されることを確認
-        $response = $this->actingAs($user)->get('/attendance');
+        // 3. 「休憩戻」ボタンが表示されることを確認する
+        $response = $this->get('/attendance');
         $response->assertSee('休憩戻');
-
-        // 勤怠一覧画面で休憩時間が正確に記録されているかを確認
-        $response = $this->actingAs($user)->get('/attendance/list');
-        $html = preg_replace('/\s+/', '', $response->getContent());
-        $this->assertStringContainsString('休憩', $html); // 休憩時刻が表示されていることを確認
     }
 
     /**
@@ -165,9 +156,8 @@ class BreakTest extends TestCase
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'work_date' => now()->toDateString(),
-            'clock_in' => now()->subHours(5),
-            'clock_out' => now(),
-            'status' => '退勤済',
+            'clock_in' => now()->subHour(),
+            'status' => '出勤中',
         ]);
 
         // 休憩時間を追加

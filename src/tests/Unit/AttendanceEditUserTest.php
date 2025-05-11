@@ -6,7 +6,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Attendance;
-use App\Models\BreakTime;
 use App\Models\AttendanceRequest;
 
 class AttendanceEditUserTest extends TestCase
@@ -14,24 +13,19 @@ class AttendanceEditUserTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * ✅ 1. 出勤時間が退勤時間より後の場合にバリデーションエラーを確認
+     * ✅ 1. 出勤時間が退勤時間より後になっている場合、エラーメッセージが表示される
      */
     public function test_validation_error_when_clock_in_is_after_clock_out()
     {
-        // 1. ユーザーを作成
-        /** @var \App\Models\User $user */
-        $user = User::factory()->create();
+        // 1. 勤怠情報が登録されたユーザーにログインをする
+        $user = User::factory()->create()->first();
         $this->actingAs($user);
 
-        // 2. 勤怠情報を作成
-        $attendance = Attendance::factory()->create([
-            'user_id' => $user->id,
-            'clock_in' => '08:00',
-            'clock_out' => '17:00',
-            'work_date' => now()->toDateString(),
-        ]);
+        // 2. 勤怠詳細ページを開く
+        $attendance = Attendance::factory()->create(['user_id' => $user->id]);
+        $this->get("/attendance/{$attendance->id}");
 
-        // 3. 出勤時間が退勤時間より後の場合のフォームデータ
+        // 3. 出勤時間を退勤時間より後に設定する
         $formData = [
             'clock_in' => '18:00',
             'clock_out' => '17:00',
@@ -40,29 +34,29 @@ class AttendanceEditUserTest extends TestCase
             'note' => 'メモ',
         ];
 
-        // 4. エラーが返ることを確認
+        // 4. 保存処理をする
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
 
-        // 5. エラーメッセージがセッションに存在することを確認
+        // 結果: 「出勤時間もしくは退勤時間が不適切な値です」というバリデーションメッセージが表示される
         $response->assertSessionHasErrors([
             'clock_in' => '出勤時間もしくは退勤時間が不適切な値です。',
         ]);
     }
 
     /**
-     * ✅ 2. 休憩開始時間が退勤時間より後の場合にバリデーションエラーを確認
+     * ✅ 2. 休憩開始時間が退勤時間より後になっている場合、エラーメッセージが表示される
      */
     public function test_validation_error_when_break_start_is_after_clock_out()
     {
-        // 1. ユーザーを作成
-        /** @var \App\Models\User $user */
-        $user = User::factory()->create();
+        // 1. 勤怠情報が登録されたユーザーにログインをする
+        $user = User::factory()->create()->first();
         $this->actingAs($user);
 
-        // 2. 勤怠情報を作成
+        // 2. 勤怠詳細ページを開く
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
+        $this->get("/attendance/{$attendance->id}");
 
-        // 3. 休憩開始時間が退勤時間より後の場合のフォームデータ
+        // 3. 休憩開始時間を退勤時間より後に設定する
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -71,29 +65,29 @@ class AttendanceEditUserTest extends TestCase
             'note' => 'メモ',
         ];
 
-        // 4. エラーが返ることを確認
+        // 4. 保存処理をする
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
 
-        // 5. エラーメッセージがセッションに存在することを確認
+        // 結果: 「休憩時間が勤務時間外です。」というバリデーションメッセージが表示される
         $response->assertSessionHasErrors([
             'break_start.0' => '休憩時間が勤務時間外です。',
         ]);
     }
 
     /**
-     * ✅ 3. 休憩終了時間が退勤時間より後の場合にバリデーションエラーを確認
+     * ✅ 3. 休憩終了時間が退勤時間より後になっている場合、エラーメッセージが表示される
      */
     public function test_validation_error_when_break_end_is_after_clock_out()
     {
-        // 1. ユーザーを作成
-        /** @var \App\Models\User $user */
-        $user = User::factory()->create();
+        // 1. 勤怠情報が登録されたユーザーにログインをする
+        $user = User::factory()->create()->first();
         $this->actingAs($user);
 
-        // 2. 勤怠情報を作成
+        // 2. 勤怠詳細ページを開く
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
+        $this->get("/attendance/{$attendance->id}");
 
-        // 3. 休憩終了時間が退勤時間より後の場合のフォームデータ
+        // 3. 休憩終了時間を退勤時間より後に設定する
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -102,29 +96,29 @@ class AttendanceEditUserTest extends TestCase
             'note' => 'メモ',
         ];
 
-        // 4. エラーが返ることを確認
+        // 4. 保存処理をする
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
 
-        // 5. エラーメッセージがセッションに存在することを確認
+        // 結果: 「休憩時間が勤務時間外です。」というバリデーションメッセージが表示される
         $response->assertSessionHasErrors([
             'break_end.0' => '休憩時間が勤務時間外です。',
         ]);
     }
 
     /**
-     * ✅ 4. 備考欄が空白の場合にバリデーションエラーを確認
+     * ✅ 4. 備考欄が未入力の場合のエラーメッセージが表示される
      */
     public function test_validation_error_when_note_is_missing()
     {
-        // 1. ユーザーを作成
-        /** @var \App\Models\User $user */
-        $user = User::factory()->create();
+        // 1. 勤怠情報が登録されたユーザーにログインをする
+        $user = User::factory()->create()->first();
         $this->actingAs($user);
 
-        // 2. 勤怠情報を作成
+        // 2. 勤怠詳細ページを開く
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
+        $this->get("/attendance/{$attendance->id}");
 
-        // 3. 備考欄が空の場合のフォームデータ
+        // 3. 備考欄を未入力のまま保存処理をする
         $formData = [
             'clock_in' => '09:00',
             'clock_out' => '17:00',
@@ -133,10 +127,9 @@ class AttendanceEditUserTest extends TestCase
             'note' => '',
         ];
 
-        // 4. エラーが返ることを確認
         $response = $this->put(route('attendance.update', $attendance->id), $formData);
 
-        // 5. エラーメッセージがセッションに存在することを確認
+        // 結果: 「備考を記入してください」というバリデーションメッセージが表示される
         $response->assertSessionHasErrors([
             'note' => '備考を記入してください。',
         ]);
@@ -296,15 +289,17 @@ class AttendanceEditUserTest extends TestCase
             'note' => '詳細表示用',
         ]);
 
-        // 3. 管理者として詳細画面にアクセス
-        $requestId = AttendanceRequest::where('user_id', $user->id)->first()->id;
-        $this->actingAs($admin, 'admin');
-        $response = $this->get(route('admin.request.show', ['id' => $requestId]));
-
-        // 4. 詳細画面に正しい情報が表示されていることを確認
+        // 3. 一般ユーザー側の申請一覧画面を開く
+        $response = $this->get(route('request.list'));
         $response->assertStatus(200);
-        $response->assertSee('修正申請詳細');
-        $response->assertSee('詳細表示用');
+        $response->assertSee('詳細');
+
+        // 4. 「詳細」ボタンを押す（詳細画面にアクセスする）
+        $response = $this->get(route('attendance.detail', ['id' => $attendance->id]));
+
+        // 結果: 詳細画面に正しい情報が表示されていることを確認
+        $response->assertStatus(200);
+        $response->assertSee('勤怠詳細');
         $response->assertSee('09:00');
         $response->assertSee('17:00');
     }

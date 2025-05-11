@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\User;
 
 class RegisterTest extends TestCase
 {
@@ -111,7 +110,7 @@ class RegisterTest extends TestCase
     }
 
     /**
-     * ✅ 6. 会員登録成功時にログインページにリダイレクトされることを確認するテスト
+     * ✅ 6. 会員登録成功時にメール認証画面にリダイレクトされることを確認するテスト
      */
     public function test_successful_registration_redirects_to_login()
     {
