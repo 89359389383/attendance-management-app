@@ -95,7 +95,7 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-// メール認証を完了したら、自動ログインしプロフィール設定へ
+// メール認証を完了したら、自動ログインし勤怠登録画面へ
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $user = $request->user();
     $request->fulfill(); // 認証を完了

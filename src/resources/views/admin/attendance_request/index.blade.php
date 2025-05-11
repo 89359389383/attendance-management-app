@@ -12,17 +12,30 @@
 
     {{-- タブ切り替え＆検索 --}}
     <div class="tabs">
-        <button class="tab-button active" onclick="location.href='?tab=pending&name={{ request('name') }}'">承認待ち</button>
-        <button class="tab-button" onclick="location.href='?tab=approved&name={{ request('name') }}'">承認済み</button>
+        <button class="tab-button {{ request('tab', 'pending') === 'pending' ? 'active' : '' }}"
+            onclick="location.href='?tab=pending&name={{ request('name') }}'">
+            承認待ち
+        </button>
+        <button class="tab-button {{ request('tab') === 'approved' ? 'active' : '' }}"
+            onclick="location.href='?tab=approved&name={{ request('name') }}'">
+            承認済み
+        </button>
+
+        {{-- 検索フォーム --}}
         <form method="GET" class="search-form" style="margin: 20px 0; display: flex; gap: 10px;">
-            {{-- 名前での検索 --}}
+            {{-- 名前検索 --}}
             <input type="text" name="name" value="{{ request('name') }}" placeholder="名前で検索" class="search-input">
+
+            {{-- 現在のタブ情報を引き継ぐ hidden input --}}
+            <input type="hidden" name="tab" value="{{ request('tab', 'pending') }}">
 
             {{-- 検索ボタン --}}
             <button type="submit" class="search-button">検索</button>
 
-            {{-- リセットボタン（nameだけ初期化） --}}
-            <a href="{{ route(Route::currentRouteName()) }}" class="search-button" style="background-color: #e4e4e4; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
+            {{-- リセットボタン（tab情報も維持） --}}
+            <a href="{{ route(Route::currentRouteName(), ['tab' => request('tab', 'pending')]) }}"
+                class="search-button"
+                style="background-color: #e4e4e4; text-decoration: none; padding: 6px 12px; border-radius: 4px;">
                 リセット
             </a>
         </form>
