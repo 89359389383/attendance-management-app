@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'COACHTECH勤怠管理 - メール認証案内')
+
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/auth/verify-email.css') }}" />
 @endsection

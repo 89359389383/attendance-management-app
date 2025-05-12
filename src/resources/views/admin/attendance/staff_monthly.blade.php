@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'COACHTECH - スタッフ月次勤怠一覧')
+@section('title', 'COACHTECH勤怠管理 - スタッフ月次勤怠一覧')
 
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/admin/attendance/staff_monthly.css') }}">

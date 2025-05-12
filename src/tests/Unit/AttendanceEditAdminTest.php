@@ -18,14 +18,15 @@ class AttendanceEditAdminTest extends TestCase
      */
     public function test_pending_requests_are_displayed()
     {
-        // 管理者ユーザーを作成
+        // 1. 管理者ユーザーを作成
         $admin = User::factory()->create(['is_admin' => true])->first();
 
-        // 一般ユーザーと修正申請を作成
+        // 2. 一般ユーザーを作成し、修正申請を作成
         $user = User::factory()->create();
         $attendances = Attendance::factory()->count(2)->create(['user_id' => $user->id]);
 
         foreach ($attendances as $attendance) {
+            // 3. 各勤怠に対して修正申請を作成
             AttendanceRequest::factory()->create([
                 'attendance_id' => $attendance->id,
                 'user_id' => $user->id,
@@ -34,13 +35,12 @@ class AttendanceEditAdminTest extends TestCase
             ]);
         }
 
-        // 管理者として修正申請一覧ページにアクセス（デフォルトは承認待ちタブ）
+        // 4. 管理者として修正申請一覧ページにアクセス（デフォルトは承認待ちタブ）
         $response = $this->actingAs($admin, 'admin')
             ->get(route('admin.request.list'));
 
+        // 5. ステータスが「承認待ち」であることを確認
         $response->assertStatus(200);
-
-        // 「承認待ち」申請が表示されていることだけを確認
         $response->assertSee('承認待ち');
         $response->assertSee('遅刻理由: 寝坊');
     }
@@ -50,18 +50,18 @@ class AttendanceEditAdminTest extends TestCase
      */
     public function test_approved_requests_are_displayed()
     {
-        // 管理者ユーザーを作成
+        // 1. 管理者ユーザーを作成
         $admin = User::factory()->create(['is_admin' => true])->first();
 
-        // 一般ユーザーを2名作成
+        // 2. 一般ユーザーを2名作成
         $user1 = User::factory()->create(['name' => 'ユーザー太郎']);
         $user2 = User::factory()->create(['name' => 'ユーザー花子']);
 
-        // 勤怠データを作成
+        // 3. 勤怠データを作成
         $attendance1 = Attendance::factory()->create(['user_id' => $user1->id]);
         $attendance2 = Attendance::factory()->create(['user_id' => $user2->id]);
 
-        // 承認済み修正申請を作成
+        // 4. 承認済みの修正申請を作成
         AttendanceRequest::factory()->create([
             'user_id' => $user1->id,
             'attendance_id' => $attendance1->id,
@@ -76,13 +76,12 @@ class AttendanceEditAdminTest extends TestCase
             'note' => '早退理由: 通院',
         ]);
 
-        // 承認済みタブを指定してアクセス
+        // 5. 承認済みタブを指定してアクセス
         $response = $this->actingAs($admin, 'admin')
             ->get(route('admin.request.list', ['tab' => 'approved']));
 
+        // 6. 承認済み申請が正しく表示されていることを確認
         $response->assertStatus(200);
-
-        // 承認済みの申請が表示されていることだけを確認
         $response->assertSee('承認済み');
         $response->assertSee('ユーザー太郎');
         $response->assertSee('遅刻理由: 電車遅延');
@@ -95,10 +94,10 @@ class AttendanceEditAdminTest extends TestCase
      */
     public function test_request_detail_is_displayed_correctly()
     {
-        // 管理者ユーザーを作成
+        // 1. 管理者ユーザーを作成
         $admin = User::factory()->create(['is_admin' => true])->first();
 
-        // 一般ユーザーと修正申請を作成
+        // 2. 一般ユーザーと修正申請を作成
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
@@ -109,10 +108,11 @@ class AttendanceEditAdminTest extends TestCase
             'note' => 'テスト備考',
         ]);
 
-        // 詳細ページにアクセス
+        // 3. 詳細ページにアクセス
         $response = $this->actingAs($admin, 'admin')
             ->get(route('admin.request.show', $request->id));
 
+        // 4. 詳細ページの情報が正しいことを確認
         $response->assertStatus(200);
         $response->assertSee('テスト備考');
     }
@@ -122,10 +122,10 @@ class AttendanceEditAdminTest extends TestCase
      */
     public function test_approval_process_updates_attendance_and_request()
     {
-        // 管理者ユーザーを作成
+        // 1. 管理者ユーザーを作成
         $admin = User::factory()->create(['is_admin' => true])->first();
 
-        // 一般ユーザーとデータ作成
+        // 2. 一般ユーザーと勤怠データを作成
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
@@ -141,13 +141,14 @@ class AttendanceEditAdminTest extends TestCase
             'note' => '修正理由テスト',
         ]);
 
-        // 承認処理を実行
+        // 3. 修正申請を承認
         $response = $this->actingAs($admin, 'admin')
             ->post(route('admin.request.approve', $request->id));
 
+        // 4. 承認後、リダイレクトが発生することを確認
         $response->assertRedirect(route('admin.request.list'));
 
-        // 勤怠テーブルの更新を確認
+        // 5. 勤怠テーブルのデータが更新されていることを確認
         $this->assertDatabaseHas('attendances', [
             'id' => $attendance->id,
             'clock_in' => '2025-04-25 09:00:00',
@@ -155,7 +156,7 @@ class AttendanceEditAdminTest extends TestCase
             'note' => '修正理由テスト',
         ]);
 
-        // 修正申請テーブルの更新を確認
+        // 6. 修正申請テーブルのステータスが「承認済み」に更新されていることを確認
         $this->assertDatabaseHas('attendance_requests', [
             'id' => $request->id,
             'status' => '承認済み',

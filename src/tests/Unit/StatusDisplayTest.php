@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\Attendance;
 use Carbon\Carbon;
 
-
 class StatusDisplayTest extends TestCase
 {
     use RefreshDatabase;
