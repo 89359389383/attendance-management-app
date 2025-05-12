@@ -125,7 +125,7 @@ textarea {
 .time-range {
     display: flex;
     align-items: center;
-    gap: 50px;
+    gap: 35px;
 }
 
 .button-container {
@@ -248,12 +248,12 @@ textarea {
     textarea {
         /* テキストエリアも少し小さめ */
         font-size: 14px;
-        margin-left: -55px;
+        margin-left: -58px;
         height: 70px;
     }
 
     .time-range {
-        gap: 40px;
+        gap: 18px;
     }
 
     .remarks-content {
