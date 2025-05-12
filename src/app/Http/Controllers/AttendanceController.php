@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\AttendanceRequest as AttendanceRequestModel;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\BreakTime;
-use Illuminate\Support\Facades\Log;
-use App\Models\RequestBreakTime; // ★【追加】修正申請用の休憩テーブル用モデルを読み込む
+use App\Models\RequestBreakTime;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -136,30 +135,6 @@ class AttendanceController extends Controller
             ->orderBy('work_date', 'asc') // 日付の昇順で並べる（01日→31日）
             ->get(); // 実際にデータベースから取得
 
-        // ログ出力（休憩情報含む） ← この部分を追加
-        foreach ($attendances as $attendance) {
-            Log::info("【勤怠記録】", [
-                '勤務日' => $attendance->work_date,
-                '出勤時刻' => $attendance->clock_in,
-                '退勤時刻' => $attendance->clock_out,
-                'ステータス' => $attendance->status,
-            ]);
-
-            if ($attendance->breakTimes->isEmpty()) {
-                Log::info("　→ 休憩記録なし");
-            } else {
-                foreach ($attendance->breakTimes as $index => $break) {
-                    Log::info("　→ 休憩{$index}：", [
-                        '開始' => $break->break_start,
-                        '終了' => $break->break_end,
-                        '休憩時間（分）' => $break->break_start && $break->break_end
-                            ? \Carbon\Carbon::parse($break->break_end)->diffInMinutes(\Carbon\Carbon::parse($break->break_start))
-                            : '未完了 or 不明',
-                    ]);
-                }
-            }
-        }
-
         // ビュー（resources/views/attendance/index.blade.php）に、取得した勤怠一覧と現在表示中の月を渡す
         return view('attendance.index', compact('attendances', 'currentMonth'));
     }
@@ -196,13 +171,6 @@ class AttendanceController extends Controller
         // ステータスを「修正申請中」に更新
         $attendance->status = '修正申請中';
         $attendance->save();
-
-        // ログ出力：修正申請の開始
-        Log::info('修正申請が開始されました', [
-            'ユーザーID' => Auth::id(),
-            '勤怠ID' => $attendance->id,
-            'リクエストデータ' => $request->all(),
-        ]);
 
         // ★変更箇所：既に承認待ちの修正申請があるかを確認
         $existingRequest = \App\Models\AttendanceRequest::where('attendance_id', $attendance->id)
@@ -247,20 +215,8 @@ class AttendanceController extends Controller
                     'break_start' => $startTime,
                     'break_end' => $endTime,
                 ]);
-
-                // ログ出力：休憩申請の追加
-                Log::info('休憩申請が追加されました', [
-                    '勤怠ID' => $attendance->id,
-                    '休憩開始' => $startTime,
-                    '休憩終了' => $endTime,
-                ]);
             }
         }
-
-        // ログ出力：修正申請の完了
-        Log::info('修正申請が完了しました', [
-            '勤怠ID' => $attendance->id,
-        ]);
 
         return redirect()->route('request.list')->with('success', '修正申請が完了しました。');
     }

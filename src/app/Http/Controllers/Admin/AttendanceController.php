@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdminAttendanceRequest;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
 {
@@ -26,14 +25,6 @@ class AttendanceController extends Controller
         $sort = $request->input('sort', 'users.name'); // 並び替え対象の初期値
         $direction = $request->input('direction', 'asc');
 
-        // リクエストパラメータのログ
-        Log::info('勤怠一覧ページへのアクセス', [
-            'date' => $date,
-            'name' => $name,
-            'sort' => $sort,
-            'direction' => $direction,
-        ]);
-
         // クエリビルダーの初期設定
         $query = Attendance::query()
             ->join('users', 'attendances.user_id', '=', 'users.id')
@@ -41,39 +32,18 @@ class AttendanceController extends Controller
             ->with(['user', 'breakTimes'])
             ->select('attendances.*'); // 必ず attendances.* を明示
 
-        Log::info('クエリビルダー設定', [
-            'query' => $query->toSql(),
-            'bindings' => $query->getBindings(),
-        ]);
-
         // 名前でのフィルタリング
         if ($name) {
-            Log::info('名前検索フィルタを適用', ['name' => $name]);
             $query->where('users.name', 'like', "%{$name}%");
         }
 
         // 並び替え処理
         if (in_array($sort, ['users.name', 'attendances.clock_in', 'attendances.clock_out'])) {
-            Log::info('並び替え設定', ['sort' => $sort, 'direction' => $direction]);
             $query->orderBy($sort, $direction);
-        } else {
-            Log::warning('並び替えが無効なカラム', ['sort' => $sort]);
         }
-
-        // クエリ実行前のログ
-        Log::info('クエリ実行前', [
-            'final_query' => $query->toSql(),
-            'bindings' => $query->getBindings(),
-        ]);
 
         // データの取得
         $attendances = $query->get();
-
-        // 取得したデータのログ
-        Log::info('勤怠データの取得完了', [
-            'attendances_count' => $attendances->count(),
-            'date' => $date,
-        ]);
 
         // ビューにデータを渡す
         return view('admin.attendance.index', compact('attendances', 'date'));
@@ -136,7 +106,7 @@ class AttendanceController extends Controller
             }
         }
 
-        //一覧ページへリダイレクト
+        // 一覧ページへリダイレクト
         return redirect()->route('admin.attendance.list', $attendance->id);
     }
 
@@ -167,20 +137,15 @@ class AttendanceController extends Controller
      * URL: /admin/attendance/staff/{id}/export
      * メソッド: GET
      */
-
     public function exportMonthlyCsv($id, Request $request)
     {
         $user = User::findOrFail($id);
         $yearMonth = $request->input('month', Carbon::now()->format('Y-m'));
 
-        Log::info("CSV出力開始：user_id={$id}, month={$yearMonth}");
-
         $attendances = Attendance::where('user_id', $id)
             ->where('work_date', 'like', "$yearMonth%")
             ->with('breakTimes')
             ->get();
-
-        Log::info("取得した勤怠データ数：" . $attendances->count());
 
         $csvHeader = ['日付', '出勤', '退勤', '休憩時間', '合計労働時間'];
         $csvData = [];
@@ -208,14 +173,6 @@ class AttendanceController extends Controller
                 $totalWorkDays++;
             }
 
-            Log::info("勤怠データ：", [
-                'date' => $attendance->work_date,
-                'clock_in' => $clockIn ? $clockIn->format('H:i') : null,
-                'clock_out' => $clockOut ? $clockOut->format('H:i') : null,
-                'break' => $breakFormatted,
-                'work_total' => $workTotal,
-            ]);
-
             $csvData[] = [
                 Carbon::parse($attendance->work_date)->format('Y/m/d(D)'),
                 $clockIn ? $clockIn->format('H:i') : '',
@@ -229,10 +186,7 @@ class AttendanceController extends Controller
         $csvData[] = ['勤務日数', $totalWorkDays . '日'];
         $csvData[] = ['合計勤務時間', sprintf('%d時間%02d分', floor($totalWorkMinutes / 60), $totalWorkMinutes % 60)];
 
-        Log::info("集計結果：勤務日数={$totalWorkDays}、合計勤務時間={$totalWorkMinutes}分");
-
         $fileName = $user->name . '_月次勤怠_' . $yearMonth . '.csv';
-        Log::info("CSVファイル名：{$fileName}");
 
         return response()->streamDownload(function () use ($csvHeader, $csvData) {
             $stream = fopen('php://output', 'w');

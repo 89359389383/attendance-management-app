@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth; // 現在ログイン中のユーザー情報を取得するために使用
-use App\Models\AttendanceRequest; // attendance_requestsテーブルと接続するモデル
+use Illuminate\Support\Facades\Auth;
+use App\Models\AttendanceRequest;
 use Illuminate\Http\Request;
 
 class AttendanceRequestController extends Controller

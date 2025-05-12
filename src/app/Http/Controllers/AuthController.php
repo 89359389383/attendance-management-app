@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -28,11 +27,6 @@ class AuthController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-        Log::info('ユーザー登録リクエストを受信', [
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
-
         try {
             // ユーザーを作成
             $user = User::create([
@@ -41,24 +35,16 @@ class AuthController extends Controller
                 'password' => bcrypt($request->password),
                 'is_admin' => false,
             ]);
-            Log::info('ユーザー作成成功', ['user_id' => $user->id]);
 
             // ユーザーを自動ログイン
             Auth::login($user);
-            Log::info('ユーザー自動ログイン成功', ['user_id' => $user->id]);
 
             // 認証メールを送信
             $user->sendEmailVerificationNotification();
-            Log::info('認証メール送信', ['user_email' => $user->email]);
 
             // メール認証ページにリダイレクト
-            Log::info('メール認証ページにリダイレクト');
             return redirect()->route('verification.notice');
         } catch (\Throwable $e) {
-            Log::error('ユーザー登録処理中に例外が発生', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return redirect()->back()->withErrors(['register' => '登録処理中にエラーが発生しました']);
         }
     }
