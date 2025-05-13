@@ -19,6 +19,7 @@
 5.  php artisan migrate
 6.  php artisan db:seed<br>
     ※ログインの際必要なデータは database\seeders\DatabaseSeeder.php に記載
+7.  php artisan storage:link
 
 ## 使用技術
 
