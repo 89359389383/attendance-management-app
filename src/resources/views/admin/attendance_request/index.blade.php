@@ -12,12 +12,18 @@
 
     {{-- タブ切り替え＆検索 --}}
     <div class="tabs">
+        @php
+        $pendingUrl = '?tab=pending&name=' . urlencode(request('name'));
+        $approvedUrl = '?tab=approved&name=' . urlencode(request('name'));
+        @endphp
+
         <button class="tab-button {{ request('tab', 'pending') === 'pending' ? 'active' : '' }}"
-            onclick="location.href='?tab=pending&name={{ request('name') }}'">
+            onclick="location.href='{{ $pendingUrl }}'">
             承認待ち
         </button>
+
         <button class="tab-button {{ request('tab') === 'approved' ? 'active' : '' }}"
-            onclick="location.href='?tab=approved&name={{ request('name') }}'">
+            onclick="location.href='{{ $approvedUrl }}'">
             承認済み
         </button>
 
