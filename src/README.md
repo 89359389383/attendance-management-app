@@ -19,7 +19,7 @@
 5.  php artisan migrate
 6.  php artisan db:seed<br>
     ※ログインの際必要なデータは database\seeders\DatabaseSeeder.php に記載<br>
-    ※勤怠データは 2025 年 1 月～ 4 月分挿入
+    ※勤怠データは2025年1月～4月分挿入
 7.  php artisan storage:link
 
 ## 使用技術
