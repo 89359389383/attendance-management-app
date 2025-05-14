@@ -26,10 +26,11 @@
             <div class="content">{{ $request->user->name }}</div>
         </div>
 
+        {{-- 日付 --}}
         <div class="row">
             <div class="label">日付</div>
             @php
-            $date = \Carbon\Carbon::parse($request->work_date);
+            $date = \Carbon\Carbon::parse($request->attendance->work_date);
             @endphp
             <div class="content date-content">
                 <span class="year">{{ $date->year }}年</span>

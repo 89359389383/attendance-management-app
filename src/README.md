@@ -18,7 +18,8 @@
 4.  php artisan key:generate
 5.  php artisan migrate
 6.  php artisan db:seed<br>
-    ※ログインの際必要なデータは database\seeders\DatabaseSeeder.php に記載
+    ※ログインの際必要なデータは database\seeders\DatabaseSeeder.php に記載<br>
+    ※勤怠データは 2025 年 1 月～ 4 月分挿入
 7.  php artisan storage:link
 
 ## 使用技術
@@ -41,4 +42,4 @@
 
 ## ER 図
 
-![ER Diagram](docs/勤怠管理ER図.png)
+![勤怠管理ER図](https://github.com/user-attachments/assets/f80b494e-7971-46da-8c4a-c3c0d63f9729)
