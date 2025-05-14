@@ -42,4 +42,4 @@
 
 ## ER 図
 
-![勤怠管理ER図](https://github.com/user-attachments/assets/f80b494e-7971-46da-8c4a-c3c0d63f9729)
+![ER Diagram](docs/勤怠管理ER図.png)
