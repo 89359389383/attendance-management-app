@@ -58,7 +58,7 @@
             <div class="row">
                 <div class="label">出勤・退勤</div>
                 <div class="content">
-                    <div class="time-range">
+                    <div class="time-range-pending">
                         <input type="time" name="clock_in" value="{{ old('clock_in', optional($attendanceRequest->clock_in)->format('H:i')) }}">
                         <span>～</span>
                         <input type="time" name="clock_out" value="{{ old('clock_out', optional($attendanceRequest->clock_out)->format('H:i')) }}">
@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="label">休憩{{ $index + 1 }}</div>
                 <div class="content">
-                    <div class="time-range">
+                    <div class="time-range-pending">
                         <input type="time" name="break_start[]" value="{{ old('break_start[]', optional($break->break_start)->format('H:i')) }}">
                         <span>～</span>
                         <input type="time" name="break_end[]" value="{{ old('break_end[]', optional($break->break_end)->format('H:i')) }}">
@@ -112,7 +112,7 @@
         <div class=" row">
             <div class="label">出勤・退勤</div>
             <div class="content">
-                <div class="time-range">
+                <div class="time-range-approved">
                     <span class="clock-in">{{ \Carbon\Carbon::parse($attendanceRequest->clock_in)->format('H:i') }}</span>
                     <span class="time-separator">～</span>
                     <span class="clock-out">{{ \Carbon\Carbon::parse($attendanceRequest->clock_out)->format('H:i') }}</span>
@@ -124,7 +124,7 @@
         <div class="row">
             <div class="label">休憩{{ $index + 1 }}</div>
             <div class="content">
-                <div class="time-range">
+                <div class="time-range-approved">
                     <span class="break-start">{{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }}</span>
                     <span class="time-separator">～</span>
                     <span class="break-end">{{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}</span>

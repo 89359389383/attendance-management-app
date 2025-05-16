@@ -122,7 +122,13 @@ textarea {
     resize: none;
 }
 
-.time-range {
+.time-range-approved {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.time-range-pending {
     display: flex;
     align-items: center;
     gap: 35px;
@@ -252,8 +258,12 @@ textarea {
         height: 70px;
     }
 
-    .time-range {
-        gap: 18px;
+    .time-range-approved {
+        gap: 40px;
+    }
+
+    .time-range-pending {
+        gap: 16px;
     }
 
     .remarks-content {
@@ -334,9 +344,13 @@ textarea {
         font-weight: bold;
     }
 
-    .time-range {
+    .time-range-approved {
         /* 休憩などの時間範囲も詰める */
         gap: 15px;
+    }
+
+    .time-range-pending {
+        gap: 14px;
     }
 
     input[type="time"] {
