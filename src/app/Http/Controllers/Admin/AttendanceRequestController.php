@@ -12,7 +12,7 @@ class AttendanceRequestController extends Controller
 {
     /**
      * 修正申請一覧ページを表示するメソッド（承認待ち・承認済み）
-     * URL: /stamp_correction_request/list
+     * URL: /admin/stamp_correction_request/list
      * メソッド: GET
      * 認証: 管理者
      */
@@ -117,6 +117,12 @@ class AttendanceRequestController extends Controller
         }
     }
 
+    /**
+     * 修正申請を一括承認するメソッド
+     * URL: /stamp_correction_request/bulk_approve
+     * メソッド: POST
+     * 認証: 管理者
+     */
     public function bulkApprove(Request $request)
     {
         // リクエストで選択された申請IDのリストを取得（デフォルトは空の配列）

@@ -51,7 +51,7 @@ class AttendanceController extends Controller
 
     /**
      * 勤怠詳細画面を表示する（管理者）
-     * URL: /attendance/{id}
+     * URL: /admin/attendance/{id}
      * メソッド: GET
      */
     public function show($id)
@@ -66,7 +66,7 @@ class AttendanceController extends Controller
 
     /**
      * 勤怠データの更新（管理者による修正）
-     * URL: /attendance/{id}
+     * URL: /admin/attendance/{id}
      * メソッド: PUT
      */
     public function update(AdminAttendanceRequest $request, $id)
